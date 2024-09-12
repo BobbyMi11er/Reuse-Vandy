@@ -14,6 +14,7 @@ The app will be hosted on Expo
 2. NO WORK WILL BE DONE ON THE MAIN BRANCH
 3. All commits will have informative and easy to understand messages
 4. PRs will need to be reviewed by at least one other team member
+5. Commit early and often, there shouldn't be any pull requests with only one commit
 
 ## Requirements Analysis 
 [See initial requirements analyis document here](https://drive.google.com/file/d/1oITL9S0OgK37LzIqS5FeMxV5h1pcQ1l8/view?usp=sharing)
