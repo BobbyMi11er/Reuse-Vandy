@@ -39,30 +39,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="login_page"
-        options={{
-          title: "Login",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "person" : "person-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="registration_page"
-        options={{
-          title: "Register",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "person-add" : "person-add-outline"}
-              color={color}
-            />
-          ),
-        }}
-      /> */}
     </Tabs>
   );
 }
