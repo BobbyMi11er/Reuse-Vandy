@@ -1,4 +1,6 @@
 require('dotenv').config()
+import createTables from './connection'
+
 // Import the express module
 const express=require('express');
 // Create an instance of the express application
@@ -19,3 +21,4 @@ conn.connect(function(err) {
   if (err) throw err;
   console.log("Connected to DB!");
 });
+
