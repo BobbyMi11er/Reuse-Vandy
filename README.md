@@ -2,12 +2,12 @@
 Repository for CS 4278 - Principles of Software Engineering Group 15
 
 ## Project Inspiration
-This is a project designed to replace the anitquated ReuseVandy GroupMe with a user-friendly mobile application.
+This is a project designed to replace the antiquated ReuseVandy GroupMe with a user-friendly mobile application.
 This will allow for better searching, visibility, and connection between buyers and sellers.
 
 ## Framework
 We will be using ReactNative for the frontend with a NodeJS backend connected to a relational database (likely Postgress but not finalized yet)
-The app will be hosted on Expo
+The app will be hosted on Expo, a framework library for ReactNative.
 
 ## Git Best Practices
 1. A new branch will be created for each portion of the sprint
