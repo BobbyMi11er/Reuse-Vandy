@@ -70,4 +70,4 @@ const createTables = () => {
     });
 }
 
-// createTables();
+module.exports = conn;

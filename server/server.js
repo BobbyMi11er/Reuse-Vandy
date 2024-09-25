@@ -1,5 +1,4 @@
 require('dotenv').config()
-import createTables from './connection'
 
 // Import the express module
 const express=require('express');
