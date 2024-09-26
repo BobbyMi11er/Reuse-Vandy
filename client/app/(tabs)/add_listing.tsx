@@ -5,7 +5,7 @@ const AccountPage = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Account Information</Text>
+        <Text style={styles.title}>Add Listing</Text>
       </ScrollView>
     </View>
   );
