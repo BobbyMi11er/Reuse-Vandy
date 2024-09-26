@@ -25,9 +25,12 @@ const SignInPage = () => {
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Don't have an account?{" "}
-            <TouchableOpacity onPress={() => router.push("/register")}>
-              <Text style={styles.signUpText}>Sign up</Text>
-            </TouchableOpacity>
+            <Text
+              style={styles.signUpText}
+              onPress={() => router.push("/register")}
+            >
+              Sign up
+            </Text>
           </Text>
         </View>
       </View>
