@@ -111,11 +111,6 @@ const MarketplacePage = () => {
           ))}
         </View>
       </ScrollView>
-      {/* <View style={styles.bottomNav}>
-        <Ionicons name="add-circle-outline" size={30} color="black" />
-        <Ionicons name="search-outline" size={30} color="black" />
-        <Ionicons name="person-outline" size={30} color="black" />
-      </View> */}
     </SafeAreaView>
   );
 };
