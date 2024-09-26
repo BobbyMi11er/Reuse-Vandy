@@ -16,15 +16,15 @@ const RegistrationPage = () => {
   const router = useRouter();
   const [isFocusedName, setIsFocusedName] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
-  const [isFocusedYear, setIsFocusedYear] = useState(false);
-  const [isFocusedDOB, setIsFocusedDOB] = useState(false);
+  const [isFocusedPhoneNumber, setIsFocusedPhoneNumber] = useState(false);
+  const [isFocusedPassword, setIsFocusedPassword] = useState(false);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
     setIsFocusedName(false);
     setIsFocusedEmail(false);
-    setIsFocusedYear(false);
-    setIsFocusedDOB(false);
+    setIsFocusedPhoneNumber(false);
+    setIsFocusedPassword(false);
   };
 
   return (
@@ -59,28 +59,28 @@ const RegistrationPage = () => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>YEAR</Text>
+              <Text style={styles.label}>PHONE NUMBER</Text>
               <TextInput
                 style={styles.input}
-                placeholder={isFocusedYear ? "" : "2026"}
+                placeholder={isFocusedPhoneNumber ? "" : "123-456-7890"}
                 placeholderTextColor="#999"
                 // value={year}
                 // onChangeText={setYear}
-                onFocus={() => setIsFocusedYear(true)}
-                onBlur={() => setIsFocusedYear(false)}
+                onFocus={() => setIsFocusedPhoneNumber(true)}
+                onBlur={() => setIsFocusedPhoneNumber(false)}
               />
             </View>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>DATE OF BIRTH</Text>
+              <Text style={styles.label}>PASSWORD</Text>
               <TextInput
                 style={styles.input}
-                placeholder={isFocusedDOB ? "" : "MM/DD/YYYY"}
+                placeholder={isFocusedPassword ? "" : "********"}
                 placeholderTextColor="#999"
                 // value={dob}
                 // onChangeText={setDob}
-                onFocus={() => setIsFocusedDOB(true)}
-                onBlur={() => setIsFocusedDOB(false)}
+                onFocus={() => setIsFocusedPassword(true)}
+                onBlur={() => setIsFocusedPassword(false)}
               />
             </View>
 
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#000",
     marginBottom: 10,
@@ -146,11 +146,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "#F4A71D",
     paddingVertical: 15,
-    paddingHorizontal: 20,
+    width: "100%",
+    alignItems: "center",
     borderRadius: 5,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#000",
   },
