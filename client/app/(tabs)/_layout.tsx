@@ -16,6 +16,18 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="add_listing"
+        options={{
+          title: "Add Listing",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "add-circle" : "add-circle-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="home"
         options={{
           title: "Home",
