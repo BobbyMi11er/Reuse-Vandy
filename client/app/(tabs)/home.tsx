@@ -1,70 +1,154 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Card from "@/components/Card"; // Assuming Card component is in the same directory
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const marketplaceData = [
+  {
+    id: 1,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 2,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 3,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 4,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 5,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 6,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 7,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 8,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 9,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  {
+    id: 10,
+    image: require("@/assets/images/adaptive-icon.png"),
+    title: "JOHN PORK",
+    price: 9999,
+    size: "XXS",
+    time: "2 MIN AGO",
+    boosted: true,
+  },
+  // Add more items as needed
+];
 
-export default function HomeScreen() {
+const MarketplacePage = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Marketplace</Text>
+        <Ionicons name="notifications-outline" size={24} color="black" />
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.cardContainer}>
+          {marketplaceData.map((item) => (
+            <Card key={item.id} {...item} />
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#F8F8F8",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  cardContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: 10,
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+    paddingVertical: 10,
   },
 });
+
+export default MarketplacePage;
