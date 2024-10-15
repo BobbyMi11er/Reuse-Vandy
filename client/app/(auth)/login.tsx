@@ -12,17 +12,43 @@ import {
   Button,
 } from "react-native";
 import { useRouter } from "expo-router";
+import {auth} from "../../firebase"
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginPage = () => {
   const router = useRouter();
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassWord] = useState("");
+  const [error, setError] = useState("TESTING")
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
     setIsFocusedEmail(false);
     setIsFocusedPassword(false);
   };
+
+  const handleSubmit = async () => {
+    if (email.length === 0 || password.length === 0) {
+			alert('Please fill out all fields.');
+			return;
+		}
+		try {
+      console.log('Trying to sign in')
+      await signInWithEmailAndPassword(auth, email, password)
+      setError("HERE")
+      const idToken = await auth.currentUser?.getIdToken();
+      router.navigate("/(tabs)/home")
+    } catch(error) {
+      if (error instanceof Error) {
+        setError(error.message)
+      }
+      else {
+        setError("An unknown error occured")
+      }
+    }
+  }
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -41,6 +67,7 @@ const LoginPage = () => {
                 placeholderTextColor="#999"
                 onFocus={() => setIsFocusedEmail(true)}
                 onBlur={() => setIsFocusedEmail(false)}
+                onChangeText={newText => setEmail(newText)}
               />
             </View>
 
@@ -52,6 +79,7 @@ const LoginPage = () => {
                 placeholderTextColor="#999"
                 // value={dob}
                 // onChangeText={setDob}
+                onChangeText={newText => setPassWord(newText)}
                 onFocus={() => setIsFocusedPassword(true)}
                 onBlur={() => setIsFocusedPassword(false)}
               />
@@ -59,10 +87,11 @@ const LoginPage = () => {
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.7}
-              onPress={() => router.navigate("/(tabs)/home")}
+              onPress={() => handleSubmit()}
             >
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
+            <Text>{error}</Text>
           </View>
         </ScrollView>
       </View>
