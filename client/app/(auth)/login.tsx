@@ -39,7 +39,7 @@ const LoginPage = () => {
       await signInWithEmailAndPassword(auth, email, password)
       setError("HERE")
       const idToken = await auth.currentUser?.getIdToken();
-      router.navigate("/(tabs)/home")
+      router.replace("/(tabs)/home")
     } catch(error) {
       if (error instanceof Error) {
         setError(error.message)
