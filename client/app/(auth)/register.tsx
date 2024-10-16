@@ -9,10 +9,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
+
+import { authStyles } from "./auth_style";
 
 const RegistrationPage = () => {
   const router = useRouter();
@@ -43,7 +46,7 @@ const RegistrationPage = () => {
 		try {
 			await createUserWithEmailAndPassword(auth, email, password);
 			const idToken = await auth.currentUser?.getIdToken();
-			router.navigate('/(auth)/login')
+			router.navigate('/login')
 		} catch (error) {
 			alert('Failed to create user.');
 		}
@@ -51,17 +54,18 @@ const RegistrationPage = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={authStyles.container} behavior="padding">
         {/* <SafeAreaView style={styles.container}> */}
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.content}>
-            <Text style={styles.title}>Create New Account</Text>
-            <Text style={styles.subtitle}>Welcome to Reuse Vandy!</Text>
+          <View style={authStyles.content}>
+            <View style={authStyles.topSection}>
+            <Text style={authStyles.title}>Create New Account</Text>
+            <Text style={authStyles.subtitle}>Welcome to Reuse Vandy!</Text>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>NAME</Text>
+            <View style={authStyles.inputContainer}>
+              <Text style={authStyles.label}>NAME</Text>
               <TextInput
-                style={styles.input}
+                style={authStyles.input}
                 placeholder={isFocusedName ? "" : "Jiara Martins"}
                 placeholderTextColor="#999"
                 onFocus={() => setIsFocusedName(true)}
@@ -69,10 +73,10 @@ const RegistrationPage = () => {
               />
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>EMAIL</Text>
+            <View style={authStyles.inputContainer}>
+              <Text style={authStyles.label}>EMAIL</Text>
               <TextInput
-                style={styles.input}
+                style={authStyles.input}
                 placeholder={isFocusedEmail ? "" : "hello@reallygreatsite.com"}
                 placeholderTextColor="#999"
                 onFocus={() => setIsFocusedEmail(true)}
@@ -81,10 +85,10 @@ const RegistrationPage = () => {
               />
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>PHONE NUMBER</Text>
+            <View style={authStyles.inputContainer}>
+              <Text style={authStyles.label}>PHONE NUMBER</Text>
               <TextInput
-                style={styles.input}
+                style={authStyles.input}
                 placeholder={isFocusedPhoneNumber ? "" : "123-456-7890"}
                 placeholderTextColor="#999"
                 // value={year}
@@ -94,10 +98,10 @@ const RegistrationPage = () => {
               />
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>PASSWORD</Text>
+            <View style={authStyles.inputContainer}>
+              <Text style={authStyles.label}>PASSWORD</Text>
               <TextInput
-                style={styles.input}
+                style={authStyles.input}
                 placeholder={isFocusedPassword ? "" : "********"}
                 placeholderTextColor="#999"
                 // value={dob}
@@ -108,17 +112,19 @@ const RegistrationPage = () => {
                 value={password}
               />
             </View>
-
-            <TouchableOpacity
-              style={styles.button}
-              activeOpacity={0.7}
-              onPress={() => handleSubmit()}
-            >
-              <Text style={styles.buttonText}>Sign up</Text>
-            </TouchableOpacity>
+            </View>
+            <View style={authStyles.bottomSection}>
+              <TouchableOpacity
+                style={authStyles.button}
+                activeOpacity={0.7}
+                onPress={() => handleSubmit()}
+              >
+                <Text style={authStyles.buttonText}>Sign up</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
       {/* </SafeAreaView> */}
     </TouchableWithoutFeedback>
   );
