@@ -1,15 +1,24 @@
 require('dotenv').config()
 
-const mysql = require('mysql')
+const mysql = require('mysql2/promise')
 
 const pool = mysql.createPool({
     host: process.env.HOST_URL,
     user: process.env.USER,
     password: process.env.PASSWORD,
-    timeout: 15,
+    // timeout: 15,
     multipleStatements: true,
     connectionLimit: 10,
+    database: 'mydb'
 })
+
+pool.getConnection((err,connection)=> {
+    if(err)
+    throw err;
+    console.log('Database connected successfully');
+    connection.release();
+  });
+  
 
 createSchemaQuery = `
     DROP SCHEMA IF EXISTS \`mydb\`;
@@ -55,21 +64,21 @@ createPostTableQuery = `
 `
 
 const createTables = () => {
-    pool.connect(function(err) {
+    conn.connect(function(err) {
         if (err) throw err;
         console.log("Connected! Creating tables...");
 
-        pool.query(createSchemaQuery, function (err, result) {
+        conn.query(createSchemaQuery, function (err, result) {
             if (err) throw err;
             console.log("Schema created");
         });
 
-        pool.query(createUserTableQuery, function (err, result) {
+        conn.query(createUserTableQuery, function (err, result) {
             if (err) throw err;
             console.log("User table created");
         });
 
-        pool.query(createPostTableQuery, function (err, result) {
+        conn.query(createPostTableQuery, function (err, result) {
             if (err) throw err;
             console.log("Post table created");
             console.log(result)
@@ -77,6 +86,20 @@ const createTables = () => {
     });
 }
 
-createTables();
+const createFakeUser = async () => {
+    try {
+        // Insert a new user into the User table
+        // const insertQuery = `INSERT INTO User (user_firebase_id) VALUES (?)`;
+        // const [insertResult] = await pool.execute(insertQuery, ['2']); // Use execute for better predictability
+        // console.log('User inserted with ID:', insertResult.insertId);
 
-// module.exports = conn;
+        // Select all users from the User table
+        const [users] = await pool.execute('SELECT * FROM User');
+        console.log('All users:', users);
+
+    } catch (err) {
+        console.log('Error:', err);
+    }
+};
+
+module.exports = pool;
