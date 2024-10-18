@@ -51,6 +51,8 @@ createPostTableQuery = `
     \`description\` VARCHAR(500) DEFAULT '',
     \`color\` VARCHAR(30) DEFAULT '',
     \`attributes\` JSON DEFAULT NULL,
+    \'price\' DECIMAL(6,2),
+    \'size\' VARCHAR(6),
     \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     \`updated_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (\`post_id\`),
@@ -101,5 +103,20 @@ const createFakeUser = async () => {
         console.log('Error:', err);
     }
 };
+
+const updatePostTable = async () => {
+    try {
+        // Select all users from the User table
+        // const [res] = await pool.execute("ALTER TABLE Post ADD COLUMN price DECIMAL(6,2) DEFAULT 0.00, ADD COLUMN size VARCHAR(6) DEFAULT '';");
+        // console.log('Result:', res);
+        const [posts] = await pool.execute('SELECT * FROM Post');
+        console.log('All posts:', posts);
+
+    } catch (err) {
+        console.log('Error:', err);
+    }
+}
+
+// updatePostTable();
 
 module.exports = pool;

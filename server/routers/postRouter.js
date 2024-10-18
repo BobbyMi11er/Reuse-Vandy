@@ -1,5 +1,3 @@
-// routes/postRouter.js
-
 const express = require('express');
 const pool = require('../connection'); // Import the MySQL connection pool
 
@@ -7,17 +5,16 @@ const postRouter = express.Router();
 
 // Create a new post
 postRouter.post('/', async (req, res) => {
-    const { user_firebase_id, title, description, color, image_url } = req.body;
-
+    const { user_firebase_id, title, description, color, image_url, price, size } = req.body;
 
     // TODO: user_firebase_id NEEDS to go through token verification with firebase
     try {
-        // Parameterized query to safely insert data into the database
-        const queryString = `INSERT INTO Post (user_firebase_id, title, description, color, image_url) 
-                             VALUES (?, ?, ?, ?, ?)`;
-                             
-        // Execute the query with user_firebase_id set to '1' as an example
-        const [result] = await pool.execute(queryString, [user_firebase_id, title, description, color, image_url]);
+        // Parameterized query to safely insert data into the database with price and size
+        const queryString = `INSERT INTO Post (user_firebase_id, title, description, color, image_url, price, size) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+        // Execute the query with all provided data, including price and size
+        const [result] = await pool.execute(queryString, [user_firebase_id, title, description, color, image_url, price, size]);
 
         // Send response with the newly created post ID
         res.status(201).json({ message: 'Post created', post_id: result.insertId });
@@ -27,11 +24,11 @@ postRouter.post('/', async (req, res) => {
     }
 });
 
-// Get all posts with optional search and filter by color and filter by user
+// Get all posts with optional search, filter by color, filter by user, and include price and size
 postRouter.get('/', async (req, res) => {
-    const { search, color, user_firebase_id } = req.query;
+    const { search, color, user_firebase_id, min_price, max_price, size } = req.query;
     try {
-        let query = 'SELECT * FROM Post WHERE 1=1'; // Base query (1=1 ensures always valid syntax for further conditions)
+        let query = 'SELECT * FROM Post WHERE 1=1'; // Base query
         const queryParams = [];
 
         if (search) {
@@ -46,11 +43,25 @@ postRouter.get('/', async (req, res) => {
 
         if (user_firebase_id) {
             query += ' AND user_firebase_id = ?';
-            console.log(user_firebase_id)
             queryParams.push(user_firebase_id);
         }
 
-        // Execute the query with optional search and filter parameters
+        if (min_price) {
+            query += ' AND price >= ?';
+            queryParams.push(min_price);
+        }
+
+        if (max_price) {
+            query += ' AND price <= ?';
+            queryParams.push(max_price);
+        }
+
+        if (size) {
+            query += ' AND size = ?';
+            queryParams.push(size);
+        }
+
+        // Execute the query with all search and filter parameters
         const [posts] = await pool.execute(query, queryParams);
         res.status(200).json(posts);
     } catch (error) {
@@ -73,9 +84,9 @@ postRouter.get('/:post_id', async (req, res) => {
     }
 });
 
-// Update a post by ID
+// Update a post by ID, including price and size fields
 postRouter.put('/:post_id', async (req, res) => {
-    const { title, description, color, image_url } = req.body;
+    const { title, description, color, image_url, price, size } = req.body;
     try {
         // Check if the post exists
         const [post] = await pool.execute('SELECT * FROM Post WHERE post_id = ?', [req.params.post_id]);
@@ -88,8 +99,8 @@ postRouter.put('/:post_id', async (req, res) => {
 
         // Perform the update
         const [updatedPost] = await pool.execute(
-            'UPDATE Post SET title = ?, description = ?, color = ?, image_url = ? WHERE post_id = ?',
-            [title, description, color, image_url, req.params.post_id]
+            'UPDATE Post SET title = ?, description = ?, color = ?, image_url = ?, price = ?, size = ? WHERE post_id = ?',
+            [title, description, color, image_url, price, size, req.params.post_id]
         );
         res.status(200).json({ message: 'Post updated successfully' });
     } catch (error) {
