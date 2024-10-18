@@ -7,15 +7,17 @@ const postRouter = express.Router();
 
 // Create a new post
 postRouter.post('/', async (req, res) => {
-    const { title, description, color, image_url } = req.body;
+    const { user_firebase_id, title, description, color, image_url } = req.body;
 
+
+    // TODO: user_firebase_id NEEDS to go through token verification with firebase
     try {
         // Parameterized query to safely insert data into the database
         const queryString = `INSERT INTO Post (user_firebase_id, title, description, color, image_url) 
                              VALUES (?, ?, ?, ?, ?)`;
                              
         // Execute the query with user_firebase_id set to '1' as an example
-        const [result] = await pool.execute(queryString, ['1', title, description, color, image_url]);
+        const [result] = await pool.execute(queryString, [user_firebase_id, title, description, color, image_url]);
 
         // Send response with the newly created post ID
         res.status(201).json({ message: 'Post created', post_id: result.insertId });
@@ -25,9 +27,9 @@ postRouter.post('/', async (req, res) => {
     }
 });
 
-// Get all posts with optional search and filter by color
+// Get all posts with optional search and filter by color and filter by user
 postRouter.get('/', async (req, res) => {
-    const { search, color } = req.query;
+    const { search, color, user_firebase_id } = req.query;
     try {
         let query = 'SELECT * FROM Post WHERE 1=1'; // Base query (1=1 ensures always valid syntax for further conditions)
         const queryParams = [];
@@ -40,6 +42,12 @@ postRouter.get('/', async (req, res) => {
         if (color) {
             query += ' AND color = ?';
             queryParams.push(color);
+        }
+
+        if (user_firebase_id) {
+            query += ' AND user_firebase_id = ?';
+            console.log(user_firebase_id)
+            queryParams.push(user_firebase_id);
         }
 
         // Execute the query with optional search and filter parameters
@@ -76,13 +84,10 @@ postRouter.put('/:post_id', async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Assuming req.user.id is the logged-in user's ID
-        if (post[0].user_id !== req.user.id) {
-            return res.status(403).json({ message: 'Unauthorized' });
-        }
+        // TODO: Add check that the user.firebase_user_id = post.firebase_user_id
 
         // Perform the update
-        await pool.execute(
+        const [updatedPost] = await pool.execute(
             'UPDATE Post SET title = ?, description = ?, color = ?, image_url = ? WHERE post_id = ?',
             [title, description, color, image_url, req.params.post_id]
         );
