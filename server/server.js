@@ -1,23 +1,34 @@
-require('dotenv').config()
+const express = require('express');
+const bodyParser = require('body-parser');
+const postRouter = require('./routers/postRouter'); // Import the post routes
+// const { authenticate } = require('./middleware/auth'); 
 
-// Import the express module
-const express=require('express');
-// Create an instance of the express application
-const app=express();
-// Specify a port number for the server
-const port=process.env.SERVER_PORT
+const app = express();
 
-const conn = require('./connection')
-const bodyParser = require('body-parser')
+// Middleware
+app.use(bodyParser.json());
 
+// Authentication middleware
+// THIS WILL BE IMPLEMENTED WITH FIREBASE ONCE PR MERGED
+// app.use(authenticate); // This will apply authentication globally; modify if needed
 
-// Start the server and listen to the port
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Use the postRouter for routes starting with /posts
+app.use('/posts', postRouter);
+
+// Example home route
+app.get('/', (req, res) => {
+    res.send('ReuseVandy API is running!');
 });
 
-conn.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to DB!");
+// Error handling middleware
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        message: err.message || 'Internal Server Error',
+    });
 });
 
+// Start the server
+const PORT = process.env.SERVER_PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
