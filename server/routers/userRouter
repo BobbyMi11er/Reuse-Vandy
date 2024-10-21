@@ -1,0 +1,25 @@
+const express = require('express');
+const pool = require('../connection'); // Import the MySQL connection pool
+
+const userRouter = express.Router();
+
+// Create a new post
+userRouter.post('/', async (req, res) => {
+    const {user_firebase_id} = req.body;
+
+    try {
+        // Insert a new user into the User table
+        const insertQuery = `INSERT INTO User (${user_firebase_id}) VALUES (?)`;
+        const [insertResult] = await pool.execute(insertQuery, ['2']); // Use execute for better predictability
+        console.log('User inserted with ID:', insertResult.insertId);
+
+        // Send response with the newly created post ID
+        res.status(201).json({ message: 'User inserted with ID:', user_id: insertResult.insertId });
+    } catch (err) {
+        // Handle errors
+        res.status(500).json({ message: 'Failed to create user', err });
+    }
+});
+
+
+module.exports = userRouter;
