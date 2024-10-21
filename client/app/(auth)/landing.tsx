@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-const SignInPage = () => {
+const LandingPage = () => {
   const router = useRouter();
 
   return (
@@ -88,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignInPage;
+export default LandingPage;
