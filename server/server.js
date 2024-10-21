@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const postRouter = require('./routers/postRouter'); // Import the post routes
+const userRouter = require('./routers/userRouter');
 // const { authenticate } = require('./middleware/auth'); 
 
 const app = express();
@@ -14,6 +15,9 @@ app.use(bodyParser.json());
 
 // Use the postRouter for routes starting with /posts
 app.use('/posts', postRouter);
+
+// Use the userRouter for routes starting with /users
+app.use('/users', userRouter);
 
 // Example home route
 app.get('/', (req, res) => {
