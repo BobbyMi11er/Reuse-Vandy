@@ -5,20 +5,36 @@ const userRouter = express.Router();
 
 // Create a new post
 userRouter.post('/', async (req, res) => {
-    const {user_firebase_id} = req.body;
+    const {user_firebase_id, name, pronoun, email, phone_number, profile_img_url } = req.body;
 
     try {
         // Insert a new user into the User table
-        const insertQuery = `INSERT INTO User (${user_firebase_id}) VALUES (?)`;
-        const [insertResult] = await pool.execute(insertQuery, ['2']); // Use execute for better predictability
-        console.log('User inserted with ID:', insertResult.insertId);
+        const insertQuery = `INSERT INTO User (user_firebase_id) VALUES (?)`;
+        const [insertResult] = await pool.execute(insertQuery, [user_firebase_id, name, pronoun, email, phone_number, profile_img_url]); // Use execute for better predictability
 
         // Send response with the newly created post ID
-        res.status(201).json({ message: 'User inserted with ID:', user_id: insertResult.insertId });
+        res.status(201).json({ message: 'User inserted with ID:', user_id: insertResult.insertId});
     } catch (err) {
         // Handle errors
         res.status(500).json({ message: 'Failed to create user', err });
     }
+});
+
+// Create a new post
+userRouter.post('/update', async (req, res) => {
+  const {user_firebase_id, name, pronoun, email, phone_number, profile_img_url } = req.body;
+
+  try {
+      // updating a user
+      const insertQuery = `INSERT INTO User (user_firebase_id) VALUES (?)`;
+      const [insertResult] = await pool.execute(insertQuery, [user_firebase_id, name, pronoun, email, phone_number, profile_img_url]); // Use execute for better predictability
+
+      // Send response with the newly created post ID
+      res.status(201).json({ message: 'User inserted with ID:', user_id: insertResult.insertId});
+  } catch (err) {
+      // Handle errors
+      res.status(500).json({ message: 'Failed to create user', err });
+  }
 });
 
 

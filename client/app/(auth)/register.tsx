@@ -48,7 +48,7 @@ const RegistrationPage = () => {
 			const idToken = await auth.currentUser?.getIdToken();
 
       // call to server
-
+      
 			router.navigate('/login')
 		} catch (error) {
 			alert('Failed to create user.');
