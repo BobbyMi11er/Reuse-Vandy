@@ -15,6 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserById } from "@/utils/interfaces/userInterface";
 import { useState, useEffect } from "react";
 import { UserType } from "@/utils/models/userModel";
+import { router } from "expo-router";
+import Notifications from "@/components/notificationsModal";
 
 const marketplaceData = [
   {
@@ -114,6 +116,7 @@ const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [notificationsModalVisible, setNotificationsVisible] = useState(false)
 
   const getUserId = async () => {
     try {
@@ -143,7 +146,9 @@ const AccountPage = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Account</Text>
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <TouchableOpacity onPress={() => setNotificationsVisible(true)}>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
@@ -187,6 +192,7 @@ const AccountPage = () => {
           ))}
         </View>
       </ScrollView>
+      <Notifications modalVisible={notificationsModalVisible} setModalVisible={setNotificationsVisible} />
     </SafeAreaView>
   );
 };

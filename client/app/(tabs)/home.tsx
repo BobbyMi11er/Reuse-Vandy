@@ -1,7 +1,8 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Card from "@/components/Card"; // Assuming Card component is in the same directory
+import Notifications from "@/components/notificationsModal";
 
 const marketplaceData = [
   {
@@ -98,11 +99,16 @@ const marketplaceData = [
 ];
 
 const MarketplacePage = () => {
+  const [notificationsModalVisible, setNotificationsVisible] = useState(false)
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Marketplace</Text>
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <TouchableOpacity onPress={() => setNotificationsVisible(true)}>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
+
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.cardContainer}>
@@ -111,6 +117,7 @@ const MarketplacePage = () => {
           ))}
         </View>
       </ScrollView>
+      <Notifications modalVisible={notificationsModalVisible} setModalVisible={setNotificationsVisible} />
     </SafeAreaView>
   );
 };
