@@ -1,16 +1,15 @@
 {
   "expo": {
-    "name": "client",
+    "name": "Reuse Vandy",
     "slug": "client",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/reuse-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/images/reuse-icon.png",
+      "resizeMode": "contain"
     },
     "ios": {
       "supportsTablet": true
