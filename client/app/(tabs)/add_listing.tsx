@@ -1,11 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import ListingForm from "../(auth)/listingform";
 
-const AccountPage = () => {
+const AddListingPage = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>Add Listing</Text>
+
+
+
+        <ListingForm></ListingForm>
       </ScrollView>
     </View>
   );
@@ -18,8 +23,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#F8F8F8",
     paddingVertical: 70,
   },
@@ -28,8 +31,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     color: "#000",
-    marginBottom: 10,
+    paddingHorizontal: 20,
   },
 });
 
-export default AccountPage;
+export default AddListingPage;
