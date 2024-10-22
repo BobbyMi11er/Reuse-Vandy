@@ -10,39 +10,39 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 interface CardProps {
+  post_id: number;
   title: string;
   price: number;
   size: string;
-  time: string;
-  image: ImageSourcePropType;
-  boosted: boolean;
+  image_url: string;
+  created_at: Date;
+  user_firebase_id: string;
 }
 
 const Card: React.FC<CardProps> = ({
-  image,
+  post_id,
   title,
   price,
   size,
-  time,
-  boosted,
+  image_url,
+  created_at,
+  user_firebase_id,
 }) => {
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.7}>
-      <Image source={image} style={styles.image} />
-      {boosted && (
-        <View style={styles.boostedLabel}>
-          <Text style={styles.boostedText}>Boosted</Text>
-        </View>
-      )}
-      <TouchableOpacity style={styles.heartIcon}>
-        <Ionicons name="heart-outline" size={24} color="white" />
-      </TouchableOpacity>
+      <Image
+        source={require("../assets/images/adaptive-icon.png")}
+        style={styles.image}
+      />
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
         <Text style={styles.size}>{size}</Text>
-        <Text style={styles.time}>{time}</Text>
+        {/* <Text style={styles.time}>{created_at.toLocaleString()}</Text> */}
       </View>
+      <TouchableOpacity style={styles.heartIcon}>
+        <Ionicons name="heart-outline" size={24} color="white" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };
@@ -59,23 +59,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 150,
   },
-  boostedLabel: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "white",
-    padding: 2,
-    borderRadius: 3,
-    overflow: "hidden",
-  },
-  boostedText: {
-    fontSize: 12,
-  },
-  heartIcon: {
-    position: "absolute",
-    bottom: 60,
-    right: 5,
-  },
   infoContainer: {
     padding: 10,
   },
@@ -88,7 +71,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   size: {
-    color: "#666",
+    color: "#FFF",
   },
   time: {
     position: "absolute",
@@ -96,6 +79,11 @@ const styles = StyleSheet.create({
     right: 5,
     fontSize: 12,
     color: "#666",
+  },
+  heartIcon: {
+    position: "absolute",
+    bottom: 60,
+    right: 5,
   },
 });
 
