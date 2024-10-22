@@ -13,110 +13,20 @@ import Card from "@/components/Card";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserById } from "@/utils/interfaces/userInterface";
+import { fetchPostByUserId } from "@/utils/interfaces/postInterface";
 import { useState, useEffect } from "react";
 import { UserType } from "@/utils/models/userModel";
-import { router } from "expo-router";
+import { PostType } from "@/utils/models/postModel";
+import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
-
-const marketplaceData = [
-  {
-    id: 1,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 2,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 3,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 4,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 5,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 6,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 7,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 8,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 9,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 10,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  // Add more items as needed
-];
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
-  const [userPosts, setUserPosts] = useState([]);
   const [notificationsModalVisible, setNotificationsVisible] = useState(false)
+  const [userPosts, setUserPosts] = useState<PostType[]>([]);
+  const navigation = useNavigation();
+  const [isFocused, setIsFocused] = useState(false);
 
   const getUserId = async () => {
     try {
@@ -128,19 +38,36 @@ const AccountPage = () => {
   };
 
   useEffect(() => {
+    const checkFocus = () => {
+      setIsFocused(navigation.isFocused());
+    };
+    checkFocus();
+    navigation.addListener("focus", checkFocus);
+    navigation.addListener("blur", checkFocus);
+    return () => {
+      navigation.removeListener("focus", checkFocus);
+      navigation.removeListener("blur", checkFocus);
+    };
+  }, [navigation]);
+
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userId = await getUserId();
         setUserId(userId);
         const token = await AsyncStorage.getItem("token");
         const userData = await getUserById(token!, userId!);
+        const userPosts = await fetchPostByUserId(token!, userId!);
         setUserData(userData);
+        setUserPosts(userPosts);
       } catch (error) {
         console.error("Error:", error);
       }
     };
-    fetchUserData();
-  }, []);
+    if (isFocused) {
+      fetchUserData();
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -187,8 +114,8 @@ const AccountPage = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.cardContainer}>
-          {marketplaceData.map((item) => (
-            <Card key={item.id} {...item} />
+          {userPosts.map((item) => (
+            <Card key={item.post_id} {...item} />
           ))}
         </View>
       </ScrollView>
