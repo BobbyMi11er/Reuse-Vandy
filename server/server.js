@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const postRouter = require('./routers/postRouter'); // Import the post routes
-const userRouter = require('./routers/userRouter');
+const userRouter = require('./routers/userRouter.js');
 // const { authenticate } = require('./middleware/auth'); 
 
 const app = express();
@@ -36,3 +36,5 @@ const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;

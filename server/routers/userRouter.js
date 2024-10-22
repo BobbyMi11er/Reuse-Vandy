@@ -8,7 +8,7 @@ userRouter.post('/', async (req, res) => {
     const { user_firebase_id, name, pronoun, email, phone_number, profile_img_url } = req.body;
 
     try {
-        const insertQuery = `INSERT INTO User (user_firebase_id, name, pronoun, email, phone_number, profile_img_url) VALUES (?, ?, ?, ?, ?, ?)`;
+        const insertQuery = `INSERT INTO User (user_firebase_id, name, pronouns, email, phone_number, profile_img_url) VALUES (?, ?, ?, ?, ?, ?)`;
         const [insertResult] = await pool.execute(insertQuery, [user_firebase_id, name, pronoun, email, phone_number, profile_img_url]);
 
         res.status(201).json({ message: 'User inserted', user_id: insertResult.insertId });
