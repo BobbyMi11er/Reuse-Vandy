@@ -1,70 +1,127 @@
-const express = require('express');
-const pool = require('../connection'); // Import your MySQL connection pool
+const express = require("express");
+const pool = require("../connection"); // Import the MySQL connection pool
 
 const userRouter = express.Router();
 
-// Create a new user
-userRouter.post('/', async (req, res) => {
-    const { user_firebase_id, name, pronoun, email, phone_number, profile_img_url } = req.body;
+// Create a new post
+userRouter.get("/", async (req, res) => {
+  try {
+    // Select all users from the User table
+    const selectQuery = `SELECT * FROM User`;
+    const [users] = await pool.execute(selectQuery);
 
-    try {
-        const insertQuery = `INSERT INTO User (user_firebase_id, name, pronouns, email, phone_number, profile_img_url) VALUES (?, ?, ?, ?, ?, ?)`;
-        const [insertResult] = await pool.execute(insertQuery, [user_firebase_id, name, pronoun, email, phone_number, profile_img_url]);
-
-        res.status(201).json({ message: 'User inserted', user_id: insertResult.insertId });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to create user', error: err.message });
-    }
+    // Send response with all users
+    res.status(200).json(users);
+  } catch (err) {
+    // Handle errors
+    res.status(500).json({ message: "Failed to retrieve users", err });
+  }
 });
 
-// Get all users
-userRouter.get('/', async (req, res) => {
-    try {
-        const selectQuery = `SELECT * FROM User`;
-        const [rows] = await pool.execute(selectQuery);
+userRouter.post("/", async (req, res) => {
+  const {
+    user_firebase_id,
+    name,
+    pronouns,
+    email,
+    phone_number,
+    profile_img_url,
+  } = req.body;
 
-        res.status(200).json(rows); // Return the array of all users
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to retrieve users', error: err.message });
-    }
+  // console.log("Request Body:", req.body);
+
+  try {
+    const insertQuery = `INSERT INTO User (
+      user_firebase_id,
+      email,
+      name,
+      phone_number,
+      pronouns,
+      profile_img_url
+    ) VALUES (?, ?, ?, ?, ?, ?)`;
+    const [insertResult] = await pool.execute(insertQuery, [
+      user_firebase_id,
+      email,
+      name,
+      phone_number,
+      pronouns,
+      profile_img_url,
+    ]);
+
+    res.status(201).json({
+      message: "User inserted with ID:",
+      user_firebase_id: insertResult.insertId,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to create user", err });
+  }
 });
 
-// Get a user by user_firebase_id
-userRouter.get('/:user_firebase_id', async (req, res) => {
-    const { user_firebase_id } = req.params;
+// Create a new post
+userRouter.post("/update", async (req, res) => {
+  const {
+    user_firebase_id,
+    name,
+    pronoun,
+    email,
+    phone_number,
+    profile_img_url,
+  } = req.body;
 
-    try {
-        const selectQuery = `SELECT * FROM User WHERE user_firebase_id = ?`;
-        const [rows] = await pool.execute(selectQuery, [user_firebase_id]);
+  try {
+    // updating a user
+    const insertQuery = `INSERT INTO User (user_firebase_id) VALUES (?)`;
+    const [insertResult] = await pool.execute(insertQuery, [
+      user_firebase_id,
+      name,
+      pronoun,
+      email,
+      phone_number,
+      profile_img_url,
+    ]); // Use execute for better predictability
 
-        if (rows.length > 0) {
-            res.status(200).json(rows[0]);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to retrieve user', error: err.message });
-    }
+    // Send response with the newly created post ID
+    res.status(201).json({
+      message: "User inserted with ID:",
+      user_id: insertResult.insertId,
+    });
+  } catch (err) {
+    // Handle errors
+    res.status(500).json({ message: "Failed to create user", err });
+  }
 });
 
+// Retrieve a user by ID
+userRouter.get("/:id", async (req, res) => {
+  const userId = req.params.id;
 
+  try {
+    const selectQuery = `SELECT * FROM User WHERE user_firebase_id = ?`;
+    const [user] = await pool.execute(selectQuery, [userId]);
 
-// Update a user
-userRouter.post('/update', async (req, res) => {
-    const { user_firebase_id, name, pronoun, email, phone_number, profile_img_url } = req.body;
-
-    try {
-        const updateQuery = `UPDATE User SET name = ?, pronoun = ?, email = ?, phone_number = ?, profile_img_url = ? WHERE user_firebase_id = ?`;
-        const [updateResult] = await pool.execute(updateQuery, [name, pronoun, email, phone_number, profile_img_url, user_firebase_id]);
-
-        if (updateResult.affectedRows > 0) {
-            res.status(200).json({ message: 'User updated successfully' });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to update user', error: err.message });
+    if (!user || user.length === 0) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json(user[0]);
     }
+  } catch (err) {
+    res.status(500).json({ message: "Failed to retrieve user", err });
+  }
+});
+
+// Delete user by ID
+userRouter.delete("/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const deleteQuery = `DELETE FROM User WHERE user_firebase_id = ?`;
+    await pool.execute(deleteQuery, [userId]);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete user", err });
+  }
 });
 
 module.exports = userRouter;
