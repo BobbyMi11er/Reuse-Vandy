@@ -28,7 +28,7 @@ userRouter.post("/", async (req, res) => {
     profile_img_url,
   } = req.body;
 
-  console.log("Request Body:", req.body);
+  // console.log("Request Body:", req.body);
 
   try {
     const insertQuery = `INSERT INTO User (
