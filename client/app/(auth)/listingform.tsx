@@ -18,17 +18,16 @@ import { PostType } from "../../utils/models/postModel";
 import { authStyles } from "./auth_style";
 
 const ListingForm = () => {
-  const router = useRouter();
   const [isFocusedName, setIsFocusedName] = useState(false);
   const [isFocusedPrice, setIsFocusedPrice] = useState(false);
 
   // State for all PostType fields
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [color, setColor] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [price, setPrice] = useState('');
-  const [size, setSize] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [color, setColor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [price, setPrice] = useState("");
+  const [size, setSize] = useState("");
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -39,7 +38,7 @@ const ListingForm = () => {
   const handleSubmit = async () => {
     // Validate required fields
     if (!title || !price) {
-      alert('Please fill out all required fields.');
+      alert("Please fill out all required fields.");
       return;
     }
 
@@ -47,7 +46,7 @@ const ListingForm = () => {
       // Get the current user's Firebase ID token
       const idToken = await auth.currentUser?.getIdToken();
       if (!idToken || !auth.currentUser?.uid) {
-        alert('You must be logged in to create a post.');
+        alert("You must be logged in to create a post.");
         return;
       }
 
@@ -62,19 +61,17 @@ const ListingForm = () => {
         price: parseFloat(price),
         size,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       // Call the createPost method
       await createPost(idToken, newPost);
-      
-      // Navigate back or show success message
-      alert('Listing created successfully!');
-      router.back();
 
+      // Navigate back or show success message
+      alert("Listing created successfully!");
     } catch (error) {
-      console.error('Error creating post (ListingForm):', error);
-      alert('Failed to create listing. Please try again.');
+      console.error("Error creating post (ListingForm):", error);
+      alert("Failed to create listing. Please try again.");
     }
   };
 

@@ -2,6 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Card from "@/components/Card"; // Assuming Card component is in the same directory
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { PostType } from "@/utils/models/postModel";
+import { fetchPosts } from "@/utils/interfaces/postInterface";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const marketplaceData = [
   {
@@ -98,6 +103,38 @@ const marketplaceData = [
 ];
 
 const MarketplacePage = () => {
+  const navigation = useNavigation();
+  const [isFocused, setIsFocused] = useState(false);
+  const [posts, setPosts] = useState<PostType[]>([]);
+
+  useEffect(() => {
+    const checkFocus = () => {
+      setIsFocused(navigation.isFocused());
+    };
+    checkFocus();
+    navigation.addListener("focus", checkFocus);
+    navigation.addListener("blur", checkFocus);
+    return () => {
+      navigation.removeListener("focus", checkFocus);
+      navigation.removeListener("blur", checkFocus);
+    };
+  }, [navigation]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const posts = await fetchPosts(token!);
+        setPosts(posts);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    if (isFocused) {
+      fetchUserData();
+    }
+  }, [isFocused]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -106,8 +143,8 @@ const MarketplacePage = () => {
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.cardContainer}>
-          {marketplaceData.map((item) => (
-            <Card key={item.id} {...item} />
+          {posts.map((item) => (
+            <Card key={item.post_id} {...item} />
           ))}
         </View>
       </ScrollView>
