@@ -19,6 +19,7 @@ import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
+import {auth} from "../../firebase"
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -27,15 +28,21 @@ const AccountPage = () => {
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
+  const [token, setToken] = useState("")
+  const [id, setId] = useState("")
 
-  const getUserId = async () => {
-    try {
-      return await AsyncStorage.getItem("user_id");
-    } catch (error) {
-      console.log("Error retrieving token:", error);
-      throw error;
-    }
-  };
+  const getToken = async () => {
+		const token = auth.onAuthStateChanged(user => {
+			if (user) {
+				user.getIdToken().then(tok => {
+					setToken(tok);
+					setId(user.uid);
+					return tok;
+				});
+			}
+		});
+		return await token;
+	};
 
   useEffect(() => {
     const checkFocus = () => {
@@ -53,11 +60,9 @@ const AccountPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userId = await getUserId();
-        setUserId(userId);
-        const token = await AsyncStorage.getItem("token");
-        const userData = await getUserById(token!, userId!);
-        const userPosts = await fetchPostByUserId(token!, userId!);
+        getToken()
+        const userData = await getUserById(token!, id!);
+        const userPosts = await fetchPostByUserId(token!, id!);
         setUserData(userData);
         setUserPosts(userPosts);
       } catch (error) {

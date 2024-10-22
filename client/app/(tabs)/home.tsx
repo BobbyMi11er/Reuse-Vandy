@@ -7,106 +7,30 @@ import { useNavigation } from "@react-navigation/native";
 import { PostType } from "@/utils/models/postModel";
 import { fetchPosts } from "@/utils/interfaces/postInterface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const marketplaceData = [
-  {
-    id: 1,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 2,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 3,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 4,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 5,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 6,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 7,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 8,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 9,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  {
-    id: 10,
-    image: require("@/assets/images/adaptive-icon.png"),
-    title: "JOHN PORK",
-    price: 9999,
-    size: "XXS",
-    time: "2 MIN AGO",
-    boosted: true,
-  },
-  // Add more items as needed
-];
+import {auth} from "../../firebase"
 
 const MarketplacePage = () => {
   const [notificationsModalVisible, setNotificationsVisible] = useState(false)
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
   const [posts, setPosts] = useState<PostType[]>([]);
+
+  const [token, setToken] = useState("")
+  const [id, setId] = useState("")
+
+  const getToken = async () => {
+		const token = auth.onAuthStateChanged(user => {
+			if (user) {
+				user.getIdToken().then(tok => {
+					setToken(tok);
+					setId(user.uid);
+					return tok;
+				});
+        console.log(user)
+			}
+		});
+		return await token;
+	};
 
   useEffect(() => {
     const checkFocus = () => {
@@ -124,7 +48,7 @@ const MarketplacePage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
+        getToken()
         const posts = await fetchPosts(token!);
         setPosts(posts);
       } catch (error) {

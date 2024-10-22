@@ -72,9 +72,6 @@ const RegistrationPage = () => {
       };
 
       createUser(idToken!, userData);
-      await AsyncStorage.setItem("token", idToken!);
-      await AsyncStorage.setItem("user_id", user.uid);
-
       router.navigate("/login");
     } catch (error: any) {
       alert("Failed to create user.");
