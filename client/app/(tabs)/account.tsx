@@ -18,10 +18,12 @@ import { useState, useEffect } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { useNavigation } from "@react-navigation/native";
+import Notifications from "@/components/notificationsModal";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
+  const [notificationsModalVisible, setNotificationsVisible] = useState(false)
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
@@ -71,7 +73,9 @@ const AccountPage = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Account</Text>
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <TouchableOpacity onPress={() => setNotificationsVisible(true)}>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
@@ -115,6 +119,7 @@ const AccountPage = () => {
           ))}
         </View>
       </ScrollView>
+      <Notifications modalVisible={notificationsModalVisible} setModalVisible={setNotificationsVisible} />
     </SafeAreaView>
   );
 };
