@@ -12,10 +12,12 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
 import { auth } from "../../firebase";
-
+import { createUser } from "../../utils/interfaces/userInterface";
+import { UserType } from "../../utils/models/userModel";
 import { authStyles } from "./auth_style";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RegistrationPage = () => {
   const router = useRouter();
@@ -24,9 +26,12 @@ const RegistrationPage = () => {
   const [isFocusedPhoneNumber, setIsFocusedPhoneNumber] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -39,21 +44,42 @@ const RegistrationPage = () => {
   const handleSubmit = async () => {
     console.log("Submitting");
     if (email.length === 0 || password.length === 0) {
-			alert('Please fill out all fields.');
-			return;
-		}
+      alert("Please fill out all fields.");
+      return;
+    }
 
-		try {
-			await createUserWithEmailAndPassword(auth, email, password);
-			const idToken = await auth.currentUser?.getIdToken();
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const idToken = await auth.currentUser?.getIdToken();
 
-      // call to server
-      
-			router.navigate('/login')
-		} catch (error) {
-			alert('Failed to create user.');
-		}
-  }
+      if (!idToken) {
+        throw new Error("Failed to retrieve ID token");
+      }
+      console.log("idToken", idToken);
+      console.log("user_id", user.uid);
+
+      const userData: UserType = {
+        user_firebase_id: user.uid,
+        email: email,
+        name: name,
+        phone_number: phoneNumber,
+        pronouns: "",
+        profile_img_url: "",
+      };
+
+      createUser(idToken!, userData);
+      await AsyncStorage.setItem("token", idToken!);
+      await AsyncStorage.setItem("user_id", user.uid);
+
+      router.navigate("/login");
+    } catch (error: any) {
+      alert("Failed to create user.");
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -62,59 +88,60 @@ const RegistrationPage = () => {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={authStyles.content}>
             <View style={authStyles.topSection}>
-            <Text style={authStyles.title}>Create New Account</Text>
-            <Text style={authStyles.subtitle}>Welcome to Reuse Vandy!</Text>
+              <Text style={authStyles.title}>Create New Account</Text>
+              <Text style={authStyles.subtitle}>Welcome to Reuse Vandy!</Text>
 
-            <View style={authStyles.inputContainer}>
-              <Text style={authStyles.label}>NAME</Text>
-              <TextInput
-                style={authStyles.input}
-                placeholder={isFocusedName ? "" : "Jiara Martins"}
-                placeholderTextColor="#999"
-                onFocus={() => setIsFocusedName(true)}
-                onBlur={() => setIsFocusedName(false)}
-              />
-            </View>
+              <View style={authStyles.inputContainer}>
+                <Text style={authStyles.label}>NAME</Text>
+                <TextInput
+                  style={authStyles.input}
+                  placeholder={isFocusedName ? "" : "Jiara Martins"}
+                  placeholderTextColor="#999"
+                  onFocus={() => setIsFocusedName(true)}
+                  onBlur={() => setIsFocusedName(false)}
+                  onChangeText={(text) => setName(text)}
+                />
+              </View>
 
-            <View style={authStyles.inputContainer}>
-              <Text style={authStyles.label}>EMAIL</Text>
-              <TextInput
-                style={authStyles.input}
-                placeholder={isFocusedEmail ? "" : "hello@reallygreatsite.com"}
-                placeholderTextColor="#999"
-                onFocus={() => setIsFocusedEmail(true)}
-                onBlur={() => setIsFocusedEmail(false)}
-                onChangeText={text => setEmail(text)}
-              />
-            </View>
+              <View style={authStyles.inputContainer}>
+                <Text style={authStyles.label}>EMAIL</Text>
+                <TextInput
+                  style={authStyles.input}
+                  placeholder={
+                    isFocusedEmail ? "" : "hello@reallygreatsite.com"
+                  }
+                  placeholderTextColor="#999"
+                  onFocus={() => setIsFocusedEmail(true)}
+                  onBlur={() => setIsFocusedEmail(false)}
+                  onChangeText={(text) => setEmail(text)}
+                />
+              </View>
 
-            <View style={authStyles.inputContainer}>
-              <Text style={authStyles.label}>PHONE NUMBER</Text>
-              <TextInput
-                style={authStyles.input}
-                placeholder={isFocusedPhoneNumber ? "" : "123-456-7890"}
-                placeholderTextColor="#999"
-                // value={year}
-                // onChangeText={setYear}
-                onFocus={() => setIsFocusedPhoneNumber(true)}
-                onBlur={() => setIsFocusedPhoneNumber(false)}
-              />
-            </View>
+              <View style={authStyles.inputContainer}>
+                <Text style={authStyles.label}>PHONE NUMBER</Text>
+                <TextInput
+                  style={authStyles.input}
+                  placeholder={isFocusedPhoneNumber ? "" : "123-456-7890"}
+                  placeholderTextColor="#999"
+                  onFocus={() => setIsFocusedPhoneNumber(true)}
+                  onBlur={() => setIsFocusedPhoneNumber(false)}
+                  onChangeText={(text) => setPhoneNumber(text)}
+                />
+              </View>
 
-            <View style={authStyles.inputContainer}>
-              <Text style={authStyles.label}>PASSWORD</Text>
-              <TextInput
-                style={authStyles.input}
-                placeholder={isFocusedPassword ? "" : "********"}
-                placeholderTextColor="#999"
-                // value={dob}
-                // onChangeText={setDob}
-                onFocus={() => setIsFocusedPassword(true)}
-                onBlur={() => setIsFocusedPassword(false)}
-                onChangeText={text => setPassword(text)}
-                value={password}
-              />
-            </View>
+              <View style={authStyles.inputContainer}>
+                <Text style={authStyles.label}>PASSWORD</Text>
+                <TextInput
+                  style={authStyles.input}
+                  placeholder={isFocusedPassword ? "" : "********"}
+                  placeholderTextColor="#999"
+                  onFocus={() => setIsFocusedPassword(true)}
+                  onBlur={() => setIsFocusedPassword(false)}
+                  onChangeText={(text) => setPassword(text)}
+                  value={password}
+                  secureTextEntry={!showPassword}
+                />
+              </View>
             </View>
             <View style={authStyles.bottomSection}>
               <TouchableOpacity
