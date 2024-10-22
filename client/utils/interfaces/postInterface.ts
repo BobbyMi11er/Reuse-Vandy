@@ -68,7 +68,7 @@ export const createPost = async (token: string, post: PostType): Promise<PostTyp
 
     return await handleJsonResponse(response);
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error('Error creating post (PostInterface):', error);
     throw error;
   }
 };
