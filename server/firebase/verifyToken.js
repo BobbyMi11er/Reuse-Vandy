@@ -1,14 +1,12 @@
+//verifyToken.js
 // Imports the Firebase auth
 // Splits the authorization header ("Bearer <token>")
 // into an array and takes the second element, which is the token
-import { auth } from "../config/firebase";
+const { auth } = require("./firebase-config");
 
-export const verifyToken = async (
-  req,
-  _res,
-  next,
-) => {
+const verifyToken = async (req, _res, next) => {
   try {
+    console.log("verifying token")
     const token = req?.headers?.authorization?.split(" ")[1];
 
     if (!token) {
@@ -23,10 +21,11 @@ export const verifyToken = async (
       throw new Error("Token verification failed");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     req.body.user = decodeValue;
     next();
   } catch (e) {
     next(e); // Pass the error to Express error-handling middleware
   }
 };
+
+module.exports = { verifyToken };

@@ -59,8 +59,8 @@ const RegistrationPage = () => {
       if (!idToken) {
         throw new Error("Failed to retrieve ID token");
       }
-      console.log("idToken", idToken);
-      console.log("user_id", user.uid);
+      // console.log("idToken", idToken);
+      // console.log("user_id", user.uid);
 
       const userData: UserType = {
         user_firebase_id: user.uid,

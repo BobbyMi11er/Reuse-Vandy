@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const postRouter = require('./routers/postRouter'); // Import the post routes
 const userRouter = require('./routers/userRouter.js');
-// const { authenticate } = require('./middleware/auth'); 
+const { verifyToken } = require('./firebase/verifyToken.js'); 
 
 const app = express();
 
@@ -10,8 +10,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // Authentication middleware
-// THIS WILL BE IMPLEMENTED WITH FIREBASE ONCE PR MERGED
-// app.use(authenticate); // This will apply authentication globally; modify if needed
+if (process.env.NODE_ENV !== 'test') {
+    app.use(verifyToken); // This will apply authentication globally; modify if needed
+}
 
 // Use the postRouter for routes starting with /posts
 app.use('/posts', postRouter);
