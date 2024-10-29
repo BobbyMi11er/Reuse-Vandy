@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Image,
@@ -8,6 +8,8 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import SellerPopup from "./SellerPopup";
+import DeletePopup from "./DeletePopup";
 
 interface CardProps {
   post_id: number;
@@ -17,6 +19,7 @@ interface CardProps {
   image_url: string;
   created_at: Date;
   user_firebase_id: string;
+  page: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -27,9 +30,12 @@ const Card: React.FC<CardProps> = ({
   image_url,
   created_at,
   user_firebase_id,
+  page,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false)
+
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={() => setModalVisible(true)}>
       <Image
         source={require("../assets/images/adaptive-icon.png")}
         style={styles.image}
@@ -40,6 +46,11 @@ const Card: React.FC<CardProps> = ({
         <Text style={styles.size}>{size}</Text>
         {/* <Text style={styles.time}>{created_at.toLocaleString()}</Text> */}
       </View>
+      {page == "marketplace" ? 
+        <SellerPopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={user_firebase_id}/>
+        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={user_firebase_id}/>
+      }
+       
       <TouchableOpacity style={styles.heartIcon}>
         <Ionicons name="heart-outline" size={24} color="white" />
       </TouchableOpacity>

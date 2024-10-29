@@ -115,7 +115,7 @@ const AccountPage = () => {
         </View>
         <View style={styles.cardContainer}>
           {userPosts.map((item) => (
-            <Card key={item.post_id} {...item} />
+            <Card key={item.post_id} {...item} page="account" />
           ))}
         </View>
       </ScrollView>
