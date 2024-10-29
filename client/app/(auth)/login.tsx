@@ -13,10 +13,9 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import {auth} from "../../firebase"
+import { auth } from "../../firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { authStyles } from "./auth_style"; 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -45,10 +44,6 @@ const LoginPage = () => {
       if (!idToken) {
         throw new Error("Failed to retrieve ID token");
       }
-
-      await AsyncStorage.setItem("token", idToken!);
-      await AsyncStorage.setItem("user_id", user.uid);
-      
 
       router.replace("/(tabs)/home")
     } catch(error) {

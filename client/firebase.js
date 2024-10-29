@@ -22,4 +22,16 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
-export { app, auth, getApp, getAuth };
+const getUserId = () => {
+	const uid = auth.currentUser?.uid
+    if (uid == undefined) {
+      return null;
+    }
+    return uid;
+};
+
+const getToken = async () => {
+	return await auth.currentUser?.getIdToken()
+}
+
+export { app, auth, getApp, getAuth, getUserId, getToken };

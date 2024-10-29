@@ -6,7 +6,7 @@ import Notifications from "@/components/notificationsModal";
 import { useNavigation } from "@react-navigation/native";
 import { PostType } from "@/utils/models/postModel";
 import { fetchPosts } from "@/utils/interfaces/postInterface";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getToken } from "../../firebase";
 
 const MarketplacePage = () => {
   const [notificationsModalVisible, setNotificationsVisible] = useState(false)
@@ -30,7 +30,7 @@ const MarketplacePage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = await AsyncStorage.getItem("token");
+        const token = await getToken()
         const posts = await fetchPosts(token!);
         setPosts(posts);
       } catch (error) {

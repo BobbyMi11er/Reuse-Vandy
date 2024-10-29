@@ -1,27 +1,26 @@
 import { Modal, View, Text, Alert, Pressable, StyleSheet, TouchableOpacity } from "react-native";
 
-import { auth } from "../firebase";
+import { auth, getToken, getUserId } from "../firebase";
 import { getUserById } from "@/utils/interfaces/userInterface";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
 
 interface PopupProps {
     modalVisible: boolean;
     setModalVisible: (value: boolean) => void; 
-    userId: string;
 }
 
 
 const SellerPopup: React.FC<PopupProps> = ({
-    modalVisible, setModalVisible, userId
+    modalVisible, setModalVisible
 }) => {
 
     const [userData, setUserData] = useState<UserType | null>(null);
 
     const getSellerInfo = async () => {
-        const token = await AsyncStorage.getItem("token");
-        const userData = await getUserById(token!, userId)
+        const token = await getToken();
+        const userId = getUserId()
+        const userData = await getUserById(token!, userId!)
         setUserData(userData)
     }
 
