@@ -73,7 +73,7 @@ const ListingForm = () => {
       router.back();
 
     } catch (error) {
-      console.error('Error creating post (ListingForm):', error);
+      console.error('Error creating post (ListingForm ):', error);
       alert('Failed to create listing. Please try again.');
     }
   };
