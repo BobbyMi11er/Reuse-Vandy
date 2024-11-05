@@ -19,6 +19,7 @@ import { PostType } from "@/utils/models/postModel";
 import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
 import { auth, getToken, getUserId } from "../../firebase";
+import { router } from "expo-router";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -59,6 +60,12 @@ const AccountPage = () => {
       fetchUserData();
     }
   }, [isFocused]);
+
+  const handleSignOut = async () => {
+    console.log("here")
+    await auth.signOut()
+    router.replace("/(auth)/landing")
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,7 +110,13 @@ const AccountPage = () => {
           <TouchableOpacity style={styles.button} activeOpacity={0.7}>
             <Text style={styles.buttonText}>Update Account</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.sign_out_button} activeOpacity={0.7} onPress={() => handleSignOut()}>
+            <Text style={styles.buttonText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
+        <Text style={styles.name}>
+            My Posts
+          </Text>
         <View style={styles.cardContainer}>
           {userPosts.map((item) => (
             <Card key={item.post_id} {...item} page="account" />
@@ -199,6 +212,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4A71D",
     paddingVertical: 15,
     width: "100%",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  sign_out_button: {
+    marginTop: 20,
+    backgroundColor: "grey",
+    paddingVertical: 8,
+    width: "50%",
     alignItems: "center",
     borderRadius: 5,
   },

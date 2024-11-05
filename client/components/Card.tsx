@@ -32,12 +32,17 @@ const Card: React.FC<CardProps> = ({
   user_firebase_id,
   page,
 }) => {
+  // image_url not in image storage
+  if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
+    image_url = "https://reuse-vandy.s3.us-east-2.amazonaws.com/adaptive-icon.png"
+  }
+
   const [modalVisible, setModalVisible] = useState(false)
 
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={() => setModalVisible(true)}>
       <Image
-        source={require("../assets/images/adaptive-icon.png")}
+        source={{uri: image_url}}
         style={styles.image}
       />
       <View style={styles.infoContainer}>
@@ -48,7 +53,7 @@ const Card: React.FC<CardProps> = ({
       </View>
       {page == "marketplace" ? 
         <SellerPopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={user_firebase_id}/>
-        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} />
+        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} postId={post_id} />
       }
        
       <TouchableOpacity style={styles.heartIcon}>

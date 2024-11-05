@@ -1,14 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import ListingForm from "../(auth)/listingform";
+import ListingForm from "../../components/listingform";
 
 const AddListingPage = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>Add Listing</Text>
-
-
 
         <ListingForm></ListingForm>
       </ScrollView>
