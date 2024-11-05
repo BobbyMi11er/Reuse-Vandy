@@ -1,6 +1,8 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { View, Button, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { getIdToken } from 'firebase/auth';
+import { auth } from '@/firebase';
 
 interface FileObject {
   uri: string;
@@ -29,7 +31,7 @@ const ImageUploadComponent = forwardRef(({ onImageUpload }: ImageUploadComponent
   };
 
   const uploadImage = async (): Promise<string | null> => {
-    
+    console.log("image", image)
     if (image) {
         
       const formData = new FormData();
@@ -39,22 +41,24 @@ const ImageUploadComponent = forwardRef(({ onImageUpload }: ImageUploadComponent
         type: 'image/jpeg',
       };
       formData.append('file', file as any);
-    console.log("here")
+      console.log("here")
+      const idToken = await auth.currentUser?.getIdToken();
       try {
         const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/posts/fileUpload`, {
           method: 'POST',
           body: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${idToken}`
           },
         });
-
+        console.log(response)
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
 
         const data = await response.json();
-
+        console.log("data", data)
         onImageUpload(data.data.url); // Pass the URL to parent component
         return data.data.url;
       } catch (error) {

@@ -33,10 +33,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.send({ location: req.file.location });
-  });
-
 // Start the server
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, () => {

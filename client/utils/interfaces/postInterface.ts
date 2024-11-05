@@ -97,6 +97,7 @@ export const createPost = async (
   post: PostType
 ): Promise<PostType> => {
   try {
+    console.log("post", post)
     const response = await fetch(POSTS_API_URL, {
       method: "POST",
       headers: {
