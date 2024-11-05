@@ -90,7 +90,7 @@ const MarketplacePage = () => {
     return () => {
       debouncedSearch.cancel();
     };
-  }, [searchQuery, isFocused]);
+  }, [searchQuery, isFocused, activeFilters]);
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);
