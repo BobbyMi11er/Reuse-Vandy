@@ -40,7 +40,7 @@ postRouter.get("/", async (req, res) => {
   const { search, color, user_firebase_id, min_price, max_price, size } =
     req.query;
   try {
-    let query = "SELECT * FROM Post WHERE 1=1 ORDER BY created_at DESC"; // Base query
+    let query = "SELECT * FROM Post WHERE 1=1"; // Base query
     const queryParams = [];
 
     if (search) {
@@ -73,9 +73,17 @@ postRouter.get("/", async (req, res) => {
       queryParams.push(size);
     }
 
+    query += " ORDER BY created_at DESC";
     const [posts] = await pool.execute(query, queryParams);
     res.status(200).json(posts);
   } catch (error) {
+    console.error("Database Error:", {
+      message: error.message,
+      code: error.code,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql,
+    });
     res.status(500).json({ message: "Failed to retrieve posts", error });
   }
 });

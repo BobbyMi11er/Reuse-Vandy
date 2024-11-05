@@ -28,15 +28,28 @@ export const fetchPosts = async (
       queryParams.append("max_price", max_price.toString());
     if (size) queryParams.append("size", size);
 
-    const response = await fetch(`${POSTS_API_URL}?${queryParams.toString()}`, {
+    const url = `${POSTS_API_URL}?${queryParams.toString()}`;
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`, // Firebase Authorization token
       },
     });
 
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("Error response:", errorData);
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorData}`
+      );
+    }
+
     return await handleJsonResponse(response);
-  } catch (error) {
-    console.error("Error fetching posts:", error);
+  } catch (error: any) {
+    console.error("Detailed fetch error:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
     throw error;
   }
 };
