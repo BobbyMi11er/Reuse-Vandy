@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import Card from "@/components/Card";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserById } from "@/utils/interfaces/userInterface";
 import { fetchPostByUserId } from "@/utils/interfaces/postInterface";
 import { useState, useEffect } from "react";
@@ -19,23 +18,15 @@ import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
+import { auth, getToken, getUserId } from "../../firebase";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
-  const [notificationsModalVisible, setNotificationsVisible] = useState(false)
+  const [notificationsModalVisible, setNotificationsVisible] = useState(false);
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
-
-  const getUserId = async () => {
-    try {
-      return await AsyncStorage.getItem("user_id");
-    } catch (error) {
-      console.log("Error retrieving token:", error);
-      throw error;
-    }
-  };
 
   useEffect(() => {
     const checkFocus = () => {
@@ -53,9 +44,9 @@ const AccountPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userId = await getUserId();
+        const userId = getUserId();
         setUserId(userId);
-        const token = await AsyncStorage.getItem("token");
+        const token = await getToken();
         const userData = await getUserById(token!, userId!);
         const userPosts = await fetchPostByUserId(token!, userId!);
         setUserData(userData);
@@ -115,11 +106,14 @@ const AccountPage = () => {
         </View>
         <View style={styles.cardContainer}>
           {userPosts.map((item) => (
-            <Card key={item.post_id} {...item} />
+            <Card key={item.post_id} {...item} page="account" />
           ))}
         </View>
       </ScrollView>
-      <Notifications modalVisible={notificationsModalVisible} setModalVisible={setNotificationsVisible} />
+      <Notifications
+        modalVisible={notificationsModalVisible}
+        setModalVisible={setNotificationsVisible}
+      />
     </SafeAreaView>
   );
 };
@@ -140,10 +134,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
     color: "#000",
-    marginBottom: 10,
   },
 
   scrollContent: {

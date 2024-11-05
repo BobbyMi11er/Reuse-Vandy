@@ -74,9 +74,17 @@ postRouter.get("/", async (req, res) => {
       queryParams.push(size);
     }
 
+    query += " ORDER BY created_at DESC";
     const [posts] = await pool.execute(query, queryParams);
     res.status(200).json(posts);
   } catch (error) {
+    console.error("Database Error:", {
+      message: error.message,
+      code: error.code,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql,
+    });
     res.status(500).json({ message: "Failed to retrieve posts", error });
   }
 });

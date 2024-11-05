@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import {auth} from "../../firebase"
+import { auth } from "../../firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { authStyles } from "./auth_style"; 
 
@@ -38,7 +38,12 @@ const LoginPage = () => {
 		}
 		try {
       console.log('Trying to sign in')
-      await signInWithEmailAndPassword(auth, email, password)
+      const {user} = await signInWithEmailAndPassword(auth, email, password)
+      const idToken = await auth.currentUser?.getIdToken();
+
+      if (!idToken) {
+        throw new Error("Failed to retrieve ID token");
+      }
 
       router.replace("/(tabs)/home")
     } catch(error) {

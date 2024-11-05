@@ -42,6 +42,10 @@ const ListingForm = () => {
     };
 
     const handleImageUpload = (url: string | null) => {
+        if (!url) {
+            alert("Image upload failed. Please try again.");
+            return;
+        }
         setImageUrl(url); // Set the uploaded image URL
     };
 
@@ -52,14 +56,15 @@ const ListingForm = () => {
             return;
         }
 
-        // Trigger image upload if an image was picked
+        // Ensure image is uploaded and get the URL
+        let uploadedImageUrl = imageUrl; // Initialize with the current imageUrl (if any)
         if (imageUploadRef.current) {
-            const uploadedImageUrl = await imageUploadRef.current.uploadImage();
+            uploadedImageUrl = await imageUploadRef.current.uploadImage();
             if (!uploadedImageUrl) {
                 alert("Image upload failed. Please try again.");
                 return;
             }
-            setImageUrl(uploadedImageUrl);
+            setImageUrl(uploadedImageUrl); // Update the state with the new URL
         }
 
         try {
@@ -69,13 +74,14 @@ const ListingForm = () => {
                 return;
             }
 
+            // Create a new post with the confirmed image URL
             const newPost: PostType = {
                 post_id: 0,
                 user_firebase_id: auth.currentUser.uid,
                 title,
                 description,
                 color,
-                image_url: imageUrl == null ? "" : imageUrl,
+                image_url: uploadedImageUrl !== null ? uploadedImageUrl : "", // Use the uploaded image URL
                 price: parseFloat(price),
                 size,
                 created_at: new Date(),
