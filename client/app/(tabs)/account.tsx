@@ -18,12 +18,12 @@ import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
-import {auth, getToken, getUserId} from "../../firebase"
+import { auth, getToken, getUserId } from "../../firebase";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
-  const [notificationsModalVisible, setNotificationsVisible] = useState(false)
+  const [notificationsModalVisible, setNotificationsVisible] = useState(false);
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
@@ -110,7 +110,10 @@ const AccountPage = () => {
           ))}
         </View>
       </ScrollView>
-      <Notifications modalVisible={notificationsModalVisible} setModalVisible={setNotificationsVisible} />
+      <Notifications
+        modalVisible={notificationsModalVisible}
+        setModalVisible={setNotificationsVisible}
+      />
     </SafeAreaView>
   );
 };
@@ -131,10 +134,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
     color: "#000",
-    marginBottom: 10,
   },
 
   scrollContent: {
