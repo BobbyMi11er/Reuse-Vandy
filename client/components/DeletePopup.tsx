@@ -51,7 +51,7 @@ const DeletePopup: React.FC<PopupProps> = ({
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>
-                <Text style={styles.textStyle}>Hide Modal</Text>
+                <Text style={styles.textStyle}>Exit</Text>
               </Pressable>
             </View>
           </View>
@@ -84,16 +84,18 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       padding: 10,
       elevation: 2,
-      marginTop: 10
+      marginTop: 10,
+      alignItems:"center"
     },
     delete_button: {
-        backgroundColor:"red"
+        backgroundColor:"#ef4444"
     },
     edit_button: {
-        backgroundColor:"yellow",
+        backgroundColor:"#fdba74",
     },
     buttonClose: {
       backgroundColor: '#2196F3',
+      paddingHorizontal: 25,
     },
     textStyle: {
       color: 'white',
