@@ -28,10 +28,15 @@ const Card: React.FC<CardProps> = ({
   created_at,
   user_firebase_id,
 }) => {
+  // image_url not in image storage
+  if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
+    image_url = "https://reuse-vandy.s3.us-east-2.amazonaws.com/adaptive-icon.png"
+  }
+
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.7}>
       <Image
-        source={require("../assets/images/adaptive-icon.png")}
+        source={{uri: image_url}}
         style={styles.image}
       />
       <View style={styles.infoContainer}>

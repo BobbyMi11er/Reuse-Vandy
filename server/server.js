@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const postRouter = require('./routers/postRouter'); // Import the post routes
 const userRouter = require('./routers/userRouter.js');
+const upload = require("./middleware/fileUpload.js")
 // const { authenticate } = require('./middleware/auth'); 
 
 const app = express();
@@ -30,6 +31,10 @@ app.use((err, req, res, next) => {
         message: err.message || 'Internal Server Error',
     });
 });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.send({ location: req.file.location });
+  });
 
 // Start the server
 const PORT = process.env.SERVER_PORT || 3000;

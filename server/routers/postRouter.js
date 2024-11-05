@@ -1,5 +1,6 @@
 const express = require("express");
 const pool = require("../connection"); // Import the MySQL connection pool
+const uploadMiddleware = require('../middleware/fileUpload');
 
 const postRouter = express.Router();
 
@@ -159,6 +160,23 @@ postRouter.delete("/:post_id", async (req, res) => {
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete post", error });
+  }
+});
+
+postRouter.post('/fileUpload', uploadMiddleware.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(403).json({ status: false, error: 'Please upload a file' });
+  }
+
+  const data = {
+    url: req.file.location, // URL of the uploaded file in S3
+    type: req.file.mimetype,
+  };
+
+  try {
+    res.json({ status: true, data });
+  } catch (error) {
+    res.status(500).json({ status: false, error: 'File upload failed' });
   }
 });
 
