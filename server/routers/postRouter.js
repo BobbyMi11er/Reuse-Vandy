@@ -40,7 +40,7 @@ postRouter.get("/", async (req, res) => {
   const { search, color, user_firebase_id, min_price, max_price, size } =
     req.query;
   try {
-    let query = "SELECT * FROM Post WHERE 1=1"; // Base query
+    let query = "SELECT * FROM Post WHERE 1=1 ORDER BY created_at DESC"; // Base query
     const queryParams = [];
 
     if (search) {

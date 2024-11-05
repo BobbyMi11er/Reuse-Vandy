@@ -17,7 +17,6 @@ import { auth } from "../../firebase";
 import { createUser } from "../../utils/interfaces/userInterface";
 import { UserType } from "../../utils/models/userModel";
 import { authStyles } from "./auth_style";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RegistrationPage = () => {
   const router = useRouter();
@@ -59,8 +58,6 @@ const RegistrationPage = () => {
       if (!idToken) {
         throw new Error("Failed to retrieve ID token");
       }
-      console.log("idToken", idToken);
-      console.log("user_id", user.uid);
 
       const userData: UserType = {
         user_firebase_id: user.uid,
@@ -72,8 +69,6 @@ const RegistrationPage = () => {
       };
 
       createUser(idToken!, userData);
-      await AsyncStorage.setItem("token", idToken!);
-      await AsyncStorage.setItem("user_id", user.uid);
 
       router.navigate("/login");
     } catch (error: any) {
