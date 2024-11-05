@@ -58,8 +58,10 @@ const ListingForm = () => {
 
         // Ensure image is uploaded and get the URL
         let uploadedImageUrl = imageUrl; // Initialize with the current imageUrl (if any)
+        // console.log(uploadedImageUrl)
         if (imageUploadRef.current) {
             uploadedImageUrl = await imageUploadRef.current.uploadImage();
+            console.log(uploadedImageUrl)
             if (!uploadedImageUrl) {
                 alert("Image upload failed. Please try again.");
                 return;

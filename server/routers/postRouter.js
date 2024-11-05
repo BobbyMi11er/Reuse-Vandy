@@ -172,6 +172,7 @@ postRouter.delete("/:post_id", async (req, res) => {
 });
 
 postRouter.post('/fileUpload', uploadMiddleware.single('file'), async (req, res) => {
+  console.log("HERE")
   if (!req.file) {
     return res.status(403).json({ status: false, error: 'Please upload a file' });
   }
@@ -180,6 +181,8 @@ postRouter.post('/fileUpload', uploadMiddleware.single('file'), async (req, res)
     url: req.file.location, // URL of the uploaded file in S3
     type: req.file.mimetype,
   };
+
+  console.log("data", data)
 
   try {
     res.json({ status: true, data });
