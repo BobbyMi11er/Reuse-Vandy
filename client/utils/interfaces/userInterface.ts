@@ -39,11 +39,11 @@ export const createUser = async (
 
 export const updateUser = async (
   token: string,
-  user_id: number,
+  user_id: string,
   user: UserType
 ): Promise<UserType> => {
   try {
-    const response = await fetch(`${USERS_API_URL}/${user_id}`, {
+    const response = await fetch(`${USERS_API_URL}/update/${user_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
