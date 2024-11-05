@@ -4,30 +4,27 @@ import { auth, getToken, getUserId } from "../firebase";
 import { getUserById } from "@/utils/interfaces/userInterface";
 import { useEffect, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
+import { PostType } from "@/utils/models/postModel";
+import { deletePost } from "@/utils/interfaces/postInterface";
 
 interface PopupProps {
     modalVisible: boolean;
     setModalVisible: (value: boolean) => void; 
+    postId: number;
 }
 
 
-const SellerPopup: React.FC<PopupProps> = ({
-    modalVisible, setModalVisible
+const DeletePopup: React.FC<PopupProps> = ({
+    modalVisible, setModalVisible, postId
 }) => {
 
-    const [userData, setUserData] = useState<UserType | null>(null);
-
-    const getSellerInfo = async () => {
-        const token = await getToken();
-        const userId = getUserId()
-        const userData = await getUserById(token!, userId!)
-        setUserData(userData)
+    const handleDelete = async () => {
+      const token = await getToken();
+      await deletePost(token!, postId)
+      // TODO: need error handling probably
+      alert("Post Deleted")
+      setModalVisible(false)
     }
-
-    useEffect(() => {
-        if (modalVisible)
-            getSellerInfo()
-    }, [modalVisible])
 
     return (
         <Modal
@@ -47,7 +44,7 @@ const SellerPopup: React.FC<PopupProps> = ({
                 <Pressable style={[styles.button, styles.edit_button]}>
                     <Text>Edit Post</Text>
                 </Pressable>
-                <Pressable style={[styles.button, styles.delete_button]}>
+                <Pressable style={[styles.button, styles.delete_button]} onPress={() => handleDelete()}>
                     <Text>Delete Post</Text>
                 </Pressable>
               </View>
@@ -121,4 +118,4 @@ const styles = StyleSheet.create({
     }
   });
 
-export default SellerPopup;
+export default DeletePopup;

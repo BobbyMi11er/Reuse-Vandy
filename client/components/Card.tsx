@@ -53,7 +53,7 @@ const Card: React.FC<CardProps> = ({
       </View>
       {page == "marketplace" ? 
         <SellerPopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={user_firebase_id}/>
-        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} />
+        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} postId={post_id} />
       }
        
       <TouchableOpacity style={styles.heartIcon}>
