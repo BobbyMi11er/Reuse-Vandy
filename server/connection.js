@@ -4,7 +4,8 @@ const mysql = require('mysql2/promise')
 
 const pool = mysql.createPool({
     host: process.env.HOST_URL,
-    user: process.env.USER,
+    // needs to be USER_NAME because USER is overwritten by Mac & linux and USERNAME is overwritten by Windows
+    user: process.env.USER_NAME,
     password: process.env.PASSWORD,
     // timeout: 15,
     multipleStatements: true,
