@@ -40,7 +40,7 @@ const Card: React.FC<CardProps> = ({
         <Text style={styles.size}>{size}</Text>
         {/* <Text style={styles.time}>{created_at.toLocaleString()}</Text> */}
       </View>
-      <TouchableOpacity style={styles.heartIcon}>
+      <TouchableOpacity style={styles.heartIcon} testID="heart-icon">
         <Ionicons name="heart-outline" size={24} color="white" />
       </TouchableOpacity>
     </TouchableOpacity>

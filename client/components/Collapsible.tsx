@@ -17,6 +17,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
         onPress={() => setIsOpen((value) => !value)}
         activeOpacity={0.8}>
         <Ionicons
+          testID="icon"
           name={isOpen ? 'chevron-down' : 'chevron-forward-outline'}
           size={18}
           color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
