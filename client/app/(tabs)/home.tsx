@@ -208,7 +208,7 @@ const MarketplacePage = () => {
 
       {/* Filter Modal */}
       <Modal
-        animationType="slide"
+        // animationType="slide"
         transparent={true}
         visible={filterModalVisible}
         onRequestClose={() => setFilterModalVisible(false)}
