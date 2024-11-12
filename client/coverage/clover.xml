@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1731390496540" clover="3.2.0">
-  <project timestamp="1731390496541" name="All files">
+<coverage generated="1731391165359" clover="3.2.0">
+  <project timestamp="1731391165359" name="All files">
     <metrics statements="48" coveredstatements="48" conditionals="14" coveredconditionals="13" methods="13" coveredmethods="13" elements="75" coveredelements="74" complexity="0" loc="48" ncloc="48" packages="1" files="3" classes="3"/>
     <file name="Card.tsx" path="C:\Users\mseok\Documents\Vanderbilt 2024-2025\Semester 1\SWE\Reuse-Vandy\client\components\Card.tsx">
       <metrics statements="18" coveredstatements="18" conditionals="10" coveredconditionals="9" methods="3" coveredmethods="3"/>
@@ -43,17 +43,17 @@
     <file name="SellerPopup.tsx" path="C:\Users\mseok\Documents\Vanderbilt 2024-2025\Semester 1\SWE\Reuse-Vandy\client\components\SellerPopup.tsx">
       <metrics statements="16" coveredstatements="16" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
       <line num="15" count="1" type="stmt"/>
-      <line num="21" count="12" type="stmt"/>
-      <line num="23" count="12" type="stmt"/>
-      <line num="24" count="6" type="stmt"/>
-      <line num="25" count="6" type="stmt"/>
-      <line num="26" count="6" type="stmt"/>
-      <line num="27" count="5" type="stmt"/>
+      <line num="21" count="10" type="stmt"/>
+      <line num="23" count="10" type="stmt"/>
+      <line num="24" count="5" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="27" count="4" type="stmt"/>
       <line num="29" count="1" type="stmt"/>
       <line num="30" count="1" type="stmt"/>
-      <line num="34" count="12" type="stmt"/>
-      <line num="35" count="7" type="cond" truecount="2" falsecount="0"/>
-      <line num="38" count="12" type="stmt"/>
+      <line num="34" count="10" type="stmt"/>
+      <line num="35" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="10" type="stmt"/>
       <line num="45" count="1" type="stmt"/>
       <line num="46" count="1" type="stmt"/>
       <line num="72" count="1" type="stmt"/>
