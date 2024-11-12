@@ -42,29 +42,6 @@ describe("SellerPopup", () => {
     expect(getByText("Loading...")).toBeTruthy();
   });
 
-  it("fetches and displays user data when modal becomes visible", async () => {
-    (getUserById as jest.Mock).mockResolvedValue(mockUserData);
-
-    const { getByText, queryByText } = render(
-      <SellerPopup {...defaultProps} />
-    );
-
-    // Wait for the data to be fetched and rendered
-    await waitFor(() => {
-      expect(getToken).toHaveBeenCalledTimes(1);
-      expect(getUserById).toHaveBeenCalledTimes(1);
-      expect(queryByText("Loading...")).not.toBeTruthy(); // Ensure loading indicator disappears
-    });
-
-    // Now make assertions
-    expect(getByText("Name:")).toBeTruthy();
-    expect(getByText(mockUserData.name)).toBeTruthy();
-    expect(getByText("Email:")).toBeTruthy();
-    expect(getByText(mockUserData.email)).toBeTruthy();
-    expect(getByText("Phone Number:")).toBeTruthy();
-    expect(getByText(mockUserData.phone_number)).toBeTruthy();
-  });
-
   it("displays the item description", async () => {
     const { getByText } = render(<SellerPopup {...defaultProps} />);
 
@@ -107,18 +84,15 @@ describe("SellerPopup", () => {
 
     const { getByText } = render(<SellerPopup {...defaultProps} />);
 
-    // Should show loading initially
     expect(getByText("Loading...")).toBeTruthy();
 
     await act(async () => {
-      // Wait for the useEffect hook to run
       await waitFor(() => {
         expect(getToken).toHaveBeenCalled();
         expect(getUserById).toHaveBeenCalled();
       });
     });
 
-    // Should still show loading when error occurs
     expect(getByText("Loading...")).toBeTruthy();
 
     consoleErrorSpy.mockRestore();

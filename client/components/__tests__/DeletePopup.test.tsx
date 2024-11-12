@@ -64,7 +64,6 @@ describe("DeletePopup", () => {
       <DeletePopup {...defaultProps} testID="delete-popup-modal" />
     );
 
-    // Trigger onRequestClose
     fireEvent(getByTestId("delete-popup-modal"), "onRequestClose");
 
     expect(Alert.alert).toHaveBeenCalledWith("Modal has been closed.");
@@ -97,7 +96,7 @@ describe("DeletePopup", () => {
     await waitFor(() => {
       expect(getToken).toHaveBeenCalled();
       expect(deletePost).toHaveBeenCalledWith(mockToken, defaultProps.postId);
-      expect(mockSetModalVisible).not.toHaveBeenCalled(); // Modal should stay open on error
+      expect(mockSetModalVisible).not.toHaveBeenCalled();
     });
 
     consoleErrorSpy.mockRestore();
