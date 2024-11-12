@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,24 +10,30 @@ import {
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
+  Button,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../../firebase";
-import { createPost } from "../../utils/interfaces/postInterface";
-import { PostType } from "../../utils/models/postModel";
-import { authStyles } from "./auth_style";
+import { auth } from "../firebase";
+import { createPost } from "../utils/interfaces/postInterface";
+import { PostType } from "../utils/models/postModel";
+import { authStyles } from "../app/(auth)/auth_style";
+import ImageUploadComponent from "./imageUpload";
 
 const ListingForm = () => {
   const [isFocusedName, setIsFocusedName] = useState(false);
   const [isFocusedPrice, setIsFocusedPrice] = useState(false);
 
-  // State for all PostType fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [price, setPrice] = useState("");
   const [size, setSize] = useState("");
+
+  const imageUploadRef = useRef<{
+    pickImage: () => void;
+    uploadImage: () => Promise<string | null>;
+  } | null>(null);
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -35,39 +41,56 @@ const ListingForm = () => {
     setIsFocusedPrice(false);
   };
 
+  const handleImageUpload = (url: string | null) => {
+    if (!url) {
+      alert("Image upload failed. Please try again.");
+      return;
+    }
+    setImageUrl(url); // Set the uploaded image URL
+  };
+
   const handleSubmit = async () => {
     // Validate required fields
     if (!title || !price) {
-      alert("Please fill out all required fields.");
+      alert("Please fill out all required fields (title and price)");
       return;
     }
 
+    // Ensure image is uploaded and get the URL
+    let uploadedImageUrl = imageUrl; // Initialize with the current imageUrl (if any)
+    // console.log(uploadedImageUrl)
+    if (imageUploadRef.current) {
+      uploadedImageUrl = await imageUploadRef.current.uploadImage();
+      console.log(uploadedImageUrl);
+      if (!uploadedImageUrl) {
+        alert("Image upload failed. Please try again.");
+        return;
+      }
+      setImageUrl(uploadedImageUrl); // Update the state with the new URL
+    }
+
     try {
-      // Get the current user's Firebase ID token
       const idToken = await auth.currentUser?.getIdToken();
       if (!idToken || !auth.currentUser?.uid) {
         alert("You must be logged in to create a post.");
         return;
       }
 
-      // Create a new post object following PostType interface
+      // Create a new post with the confirmed image URL
       const newPost: PostType = {
-        post_id: 0, // This will be assigned by the backend
+        post_id: 0,
         user_firebase_id: auth.currentUser.uid,
         title,
         description,
         color,
-        image_url: imageUrl,
+        image_url: uploadedImageUrl !== null ? uploadedImageUrl : "", // Use the uploaded image URL
         price: parseFloat(price),
         size,
         created_at: new Date(),
         updated_at: new Date(),
       };
 
-      // Call the createPost method
       await createPost(idToken, newPost);
-
-      // Navigate back or show success message
       alert("Listing created successfully!");
     } catch (error) {
       console.error("Error creating post (ListingForm):", error);
@@ -85,21 +108,16 @@ const ListingForm = () => {
                 <Text style={authStyles.label}>Listing Name *</Text>
                 <TextInput
                   style={authStyles.input}
-                  placeholder={isFocusedName ? "" : "Listing Item"}
-                  placeholderTextColor="#999"
-                  onFocus={() => setIsFocusedName(true)}
-                  onBlur={() => setIsFocusedName(false)}
+                  placeholder="Listing Item"
                   value={title}
                   onChangeText={setTitle}
                 />
               </View>
-
               <View style={authStyles.inputContainer}>
                 <Text style={authStyles.label}>Description</Text>
                 <TextInput
                   style={[authStyles.input, { height: 100 }]}
                   placeholder="Enter item description"
-                  placeholderTextColor="#999"
                   multiline
                   value={description}
                   onChangeText={setDescription}
@@ -111,20 +129,16 @@ const ListingForm = () => {
                 <TextInput
                   style={authStyles.input}
                   placeholder="Enter item color"
-                  placeholderTextColor="#999"
                   value={color}
                   onChangeText={setColor}
                 />
               </View>
 
               <View style={authStyles.inputContainer}>
-                <Text style={authStyles.label}>Image URL</Text>
-                <TextInput
-                  style={authStyles.input}
-                  placeholder="Enter image URL"
-                  placeholderTextColor="#999"
-                  value={imageUrl}
-                  onChangeText={setImageUrl}
+                <Text style={authStyles.label}>Image</Text>
+                <ImageUploadComponent
+                  ref={imageUploadRef}
+                  onImageUpload={handleImageUpload}
                 />
               </View>
 
@@ -132,10 +146,7 @@ const ListingForm = () => {
                 <Text style={authStyles.label}>Price *</Text>
                 <TextInput
                   style={authStyles.input}
-                  placeholder={isFocusedPrice ? "" : "$1"}
-                  placeholderTextColor="#999"
-                  onFocus={() => setIsFocusedPrice(true)}
-                  onBlur={() => setIsFocusedPrice(false)}
+                  placeholder="$1"
                   value={price}
                   onChangeText={setPrice}
                   keyboardType="numeric"
@@ -147,7 +158,6 @@ const ListingForm = () => {
                 <TextInput
                   style={authStyles.input}
                   placeholder="Enter item size"
-                  placeholderTextColor="#999"
                   value={size}
                   onChangeText={setSize}
                 />
@@ -157,7 +167,6 @@ const ListingForm = () => {
             <View style={authStyles.bottomSection}>
               <TouchableOpacity
                 style={authStyles.button}
-                activeOpacity={0.7}
                 onPress={handleSubmit}
               >
                 <Text style={authStyles.buttonText}>Create Listing</Text>

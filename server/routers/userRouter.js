@@ -58,37 +58,52 @@ userRouter.post("/", async (req, res) => {
   }
 });
 
-// Create a new post
-userRouter.post("/update", async (req, res) => {
-  const {
-    user_firebase_id,
-    name,
-    pronoun,
-    email,
-    phone_number,
-    profile_img_url,
-  } = req.body;
+// Update user by ID
+userRouter.post("/update/:id", async (req, res) => {
+  const userId = req.params.id;
+  const { name, pronouns, email, phone_number, profile_img_url } = req.body;
 
   try {
-    // updating a user
-    const insertQuery = `INSERT INTO User (user_firebase_id) VALUES (?)`;
-    const [insertResult] = await pool.execute(insertQuery, [
-      user_firebase_id,
+    // Update query instead of insert
+    const updateQuery = `
+      UPDATE User 
+      SET 
+        name = ?,
+        pronouns = ?,
+        email = ?,
+        phone_number = ?,
+        profile_img_url = ?
+      WHERE user_firebase_id = ?
+    `;
+
+    const [result] = await pool.execute(updateQuery, [
       name,
-      pronoun,
+      pronouns,
       email,
       phone_number,
-      profile_img_url,
-    ]); // Use execute for better predictability
+      profile_img_url || null, // Handle null case for profile image
+      userId,
+    ]);
 
-    // Send response with the newly created post ID
-    res.status(201).json({
-      message: "User inserted with ID:",
-      user_id: insertResult.insertId,
-    });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Return the updated user data
+    const [updatedUser] = await pool.execute(
+      "SELECT * FROM User WHERE user_firebase_id = ?",
+      [userId]
+    );
+
+    res.status(200).json(updatedUser[0]);
   } catch (err) {
-    // Handle errors
-    res.status(500).json({ message: "Failed to create user", err });
+    console.error("Error updating user:", err);
+    res.status(500).json({
+      message: "Failed to update user",
+      error: err.message,
+    });
   }
 });
 
