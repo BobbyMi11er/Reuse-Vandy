@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { deletePost } from "@/utils/interfaces/postInterface";
+import EditPostsModal from "./editPosts";
 
 interface PopupProps {
     modalVisible: boolean;
@@ -17,6 +18,7 @@ interface PopupProps {
 const DeletePopup: React.FC<PopupProps> = ({
     modalVisible, setModalVisible, postId
 }) => {
+    const [editModalVisible, setEditModalVisible] = useState(false)
 
     const handleDelete = async () => {
       const token = await getToken();
@@ -24,6 +26,10 @@ const DeletePopup: React.FC<PopupProps> = ({
       // TODO: need error handling probably
       alert("Post Deleted")
       setModalVisible(false)
+    }
+
+    const handleEditPosts = () => {
+      setEditModalVisible(true)
     }
 
     return (
@@ -36,12 +42,13 @@ const DeletePopup: React.FC<PopupProps> = ({
                 setModalVisible(!modalVisible);
               }}>
                 <View style={styles.centeredView}>
+                  <EditPostsModal modalVisible={editModalVisible} setModalVisible={setEditModalVisible} postId={postId}/>
             <View style={styles.modalView}>
               <View>
                 <Text style={styles.title}>
                         Do you want to change this post?
                 </Text>
-                <Pressable style={[styles.button, styles.edit_button]}>
+                <Pressable style={[styles.button, styles.edit_button]} onPress={() => handleEditPosts()}>
                     <Text>Edit Post</Text>
                 </Pressable>
                 <Pressable style={[styles.button, styles.delete_button]} onPress={() => handleDelete()}>
