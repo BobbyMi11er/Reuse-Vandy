@@ -34,6 +34,17 @@ describe('User Router', () => {
         expect(res.body[1]).to.deep.equal(mockUsers[1]);
     });
 
+    // Test for 500 error when retrieving users fails
+    it('should return 500 if retrieving users fails', async () => {
+        queryStub.rejects(new Error('Database error'));
+
+        const res = await supertest(app)
+            .get('/users')
+            .expect(500);
+
+        expect(res.body).to.have.property('message', 'Failed to retrieve users');
+    });
+
     // Test for creating a new user
     it('should create a new user', async () => {
         queryStub.resolves([{ insertId: 1 }]);
@@ -54,23 +65,79 @@ describe('User Router', () => {
         expect(res.body).to.have.property('message', 'User inserted with ID:');
     });
 
-    // Test for updating a user
-    it('should update a user', async () => {
-        queryStub.resolves([{ affectedRows: 1 }]);
+    // Test for 500 error when creating a user fails
+    it('should return 500 if creating a user fails', async () => {
+        queryStub.rejects(new Error('Database error'));
 
         const res = await supertest(app)
-            .post('/users/update')
+            .post('/users')
             .send({
                 user_firebase_id: 'test_firebase_id',
+                name: 'Test User',
+                pronouns: 'they/them',
+                email: 'test@example.com',
+                phone_number: '1234567890',
+                profile_img_url: 'https://example.com/profile.jpg'
+            })
+            .expect(500);
+
+        expect(res.body).to.have.property('message', 'Failed to create user');
+    });
+
+    // Test for updating a user
+    it('should update a user', async () => {
+        queryStub.onFirstCall().resolves([{ affectedRows: 1 }]); // Mock successful update
+        queryStub.onSecondCall().resolves([[{ user_firebase_id: 'test_firebase_id' }]]); // Mock updated user data
+
+        const res = await supertest(app)
+            .post('/users/update/test_firebase_id')
+            .send({
                 name: 'Updated User',
                 pronouns: 'they/them',
                 email: 'updated@example.com',
                 phone_number: '9876543210',
                 profile_img_url: 'https://example.com/updated-profile.jpg'
             })
-            .expect(201);
+            .expect(200);
 
-        expect(res.body).to.have.property('message', 'User inserted with ID:');
+        expect(res.body).to.have.property('user_firebase_id', 'test_firebase_id');
+    });
+
+    // Test for 404 if updating a non-existent user
+    it('should return 404 if user to update is not found', async () => {
+        queryStub.onFirstCall().resolves([{ affectedRows: 0 }]); // Mock no user found
+
+        const res = await supertest(app)
+            .post('/users/update/non_existent_id')
+            .send({
+                name: 'Updated User',
+                pronouns: 'they/them',
+                email: 'updated@example.com',
+                phone_number: '9876543210',
+                profile_img_url: 'https://example.com/updated-profile.jpg'
+            })
+            .expect(404);
+
+        expect(res.body).to.have.property('message', 'User not found');
+    });
+
+    // Test for 500 error when updating a user fails
+    it('should return 500 if updating a user fails', async () => {
+        queryStub.onFirstCall().resolves([{ affectedRows: 1 }]);
+        queryStub.onSecondCall().rejects(new Error('Database error'));
+
+        const res = await supertest(app)
+            .post('/users/update/test_firebase_id')
+            .send({
+                name: 'Updated User',
+                pronouns: 'they/them',
+                email: 'updated@example.com',
+                phone_number: '9876543210',
+                profile_img_url: 'https://example.com/updated-profile.jpg'
+            })
+            .expect(500);
+
+        expect(res.body).to.have.property('message', 'Failed to update user');
     });
 
     // Test for retrieving a user by ID
@@ -91,6 +158,17 @@ describe('User Router', () => {
             .expect(200);
 
         expect(res.body).to.deep.equal(mockUser);
+    });
+
+    // Test for 500 error when retrieving a user fails
+    it('should return 500 if retrieving a user fails', async () => {
+        queryStub.rejects(new Error('Database error'));
+
+        const res = await supertest(app)
+            .get('/users/test_firebase_id')
+            .expect(500);
+
+        expect(res.body).to.have.property('message', 'Failed to retrieve user');
     });
 
     // Test for returning 404 if the user is not found
@@ -114,4 +192,16 @@ describe('User Router', () => {
 
         expect(res.body).to.have.property('message', 'User deleted successfully');
     });
+
+    // Test for 500 error when deleting a user fails
+    it('should return 500 if deleting a user fails', async () => {
+        queryStub.rejects(new Error('Database error'));
+
+        const res = await supertest(app)
+            .delete('/users/test_firebase_id')
+            .expect(500);
+
+        expect(res.body).to.have.property('message', 'Failed to delete user');
+    });
+
 });
