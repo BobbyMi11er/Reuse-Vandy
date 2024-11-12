@@ -75,7 +75,7 @@ const Card: React.FC<CardProps> = ({
       activeOpacity={0.7}
       onPress={() => setModalVisible(true)}
     >
-      <Image source={{ uri: image_url }} style={styles.image} />
+      <Image source={{ uri: image_url }} style={styles.image} testID="image" />
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
@@ -108,7 +108,7 @@ const Card: React.FC<CardProps> = ({
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity style={styles.heartIcon}>
+      <TouchableOpacity style={styles.heartIcon} testID="heart-icon">
         <Ionicons name="heart-outline" size={24} color="white" />
       </TouchableOpacity>
     </TouchableOpacity>
