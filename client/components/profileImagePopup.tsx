@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { auth, getToken, getUserId } from "../firebase";
-import { getUserById } from "@/utils/interfaces/userInterface";
+import { getUserById, updateUser } from "@/utils/interfaces/userInterface";
 import { useEffect, useRef, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
@@ -20,13 +20,15 @@ import { updateCurrentUser } from "firebase/auth";
 interface PopupProps {
     modalVisible: boolean;
     setModalVisible: (value: boolean) => void;
+    userData: UserType;
     userId: string;
 }
 
 const ProfileImagePopup: React.FC<PopupProps> = ({
     modalVisible,
     setModalVisible,
-    userId,
+    userData,
+    userId
 }) => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [imageSelected, setImageSelected] = useState<boolean>(false)
@@ -36,14 +38,14 @@ const ProfileImagePopup: React.FC<PopupProps> = ({
             alert("Image upload failed. Please try again.");
             return;
         }
-        console.log("here")
+        // console.log("here")
         setImageUrl(url); // Set the uploaded image URL
     };
 
     const onImageChoice = (url: string | null) => {
         setImageSelected(url !== null)
-        console.log("HERE")
-        console.log(url !== null)
+        // console.log("HERE")
+        // console.log(url !== null)
     }
 
     const hideModal = (exit: boolean) => {
@@ -70,6 +72,21 @@ const ProfileImagePopup: React.FC<PopupProps> = ({
                     return;
                 }
                 setImageUrl(uploadedImageUrl); // Update the state with the new URL
+
+                try {
+                    const token = await getToken();
+
+                    let editedUser = userData;
+                    editedUser.profile_img_url = uploadedImageUrl
+                    
+                    await updateUser(token!, userId, editedUser)
+                    alert("Profile Image updated!")
+                }
+                catch (error) {
+                    alert("Failed to update profile image. Please try again");
+                }
+                
+
             }
         }
         setModalVisible(!modalVisible);
