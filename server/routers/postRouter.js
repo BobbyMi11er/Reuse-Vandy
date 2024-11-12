@@ -1,6 +1,7 @@
 const express = require("express");
 const pool = require("../connection"); // Import the MySQL connection pool
-const uploadMiddleware = require("../middleware/fileUpload");
+// Correctly import upload from fileUpload.js
+const { upload } = require('../middleware/fileUpload'); // Adjust path as needed
 
 const postRouter = express.Router();
 
@@ -90,13 +91,13 @@ postRouter.get("/", async (req, res) => {
     const [posts] = await pool.execute(query, queryParams);
     res.status(200).json(posts);
   } catch (error) {
-    console.error("Database Error:", {
-      message: error.message,
-      code: error.code,
-      sqlState: error.sqlState,
-      sqlMessage: error.sqlMessage,
-      sql: error.sql,
-    });
+    // console.error("Database Error:", {
+    //   message: error.message,
+    //   code: error.code,
+    //   sqlState: error.sqlState,
+    //   sqlMessage: error.sqlMessage,
+    //   sql: error.sql,
+    // });
     res.status(500).json({ message: "Failed to retrieve posts", error });
   }
 });
@@ -168,7 +169,6 @@ postRouter.delete("/:post_id", async (req, res) => {
     ]);
 
     if (post.length === 0) {
-      print("HERE");
       return res.status(404).json({ message: "Post not found" });
     }
 
@@ -185,9 +185,8 @@ postRouter.delete("/:post_id", async (req, res) => {
 
 postRouter.post(
   "/fileUpload",
-  uploadMiddleware.single("file"),
+  upload.single("file"),
   async (req, res) => {
-    console.log("HERE");
     if (!req.file) {
       return res
         .status(403)
@@ -198,8 +197,6 @@ postRouter.post(
       url: req.file.location, // URL of the uploaded file in S3
       type: req.file.mimetype,
     };
-
-    console.log("data", data);
 
     try {
       res.json({ status: true, data });
