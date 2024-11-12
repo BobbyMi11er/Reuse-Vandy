@@ -146,6 +146,7 @@ const ListingForm = () => {
                                 <ImageUploadComponent
                                     ref={imageUploadRef}
                                     onImageUpload={handleImageUpload}
+                                    onImageChoice={() => {}}
                                 />
                             </View>
 
