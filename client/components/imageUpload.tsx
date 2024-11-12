@@ -12,9 +12,10 @@ interface FileObject {
 
 interface ImageUploadComponentProps {
   onImageUpload: (url: string | null) => void;
+  onImageChoice: (url: string | null) => void;
 }
 
-const ImageUploadComponent = forwardRef(({ onImageUpload }: ImageUploadComponentProps, ref) => {
+const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice }: ImageUploadComponentProps, ref) => {
   const [image, setImage] = useState<string | null>(null);
 
   const pickImage = async () => {
@@ -27,13 +28,13 @@ const ImageUploadComponent = forwardRef(({ onImageUpload }: ImageUploadComponent
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      onImageChoice(result.assets[0].uri)
     }
   };
 
   const uploadImage = async (): Promise<string | null> => {
     console.log("image", image)
     if (image) {
-        
       const formData = new FormData();
       const file: FileObject = {
         uri: image,

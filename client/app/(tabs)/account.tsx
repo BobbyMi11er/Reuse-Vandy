@@ -20,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
 import { auth, getToken, getUserId } from "../../firebase";
 import { router } from "expo-router";
+import ProfileImagePopup from "@/components/profileImagePopup";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -31,6 +32,8 @@ const AccountPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -128,6 +131,7 @@ const AccountPage = () => {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProfileImagePopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={userId!}/>
         <View style={styles.content}>
           <View style={styles.profileImageContainer}>
             <Image
@@ -135,7 +139,7 @@ const AccountPage = () => {
               style={styles.profileImage}
             />
             {isEditing && (
-              <TouchableOpacity style={styles.editButton}>
+              <TouchableOpacity style={styles.editButton} onPress={() => {setModalVisible(true)}}>
                 <Ionicons name="pencil" size={16} color="white" />
               </TouchableOpacity>
             )}
