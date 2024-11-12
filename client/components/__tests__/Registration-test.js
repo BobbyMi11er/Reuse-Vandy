@@ -15,6 +15,10 @@ jest.mock('firebase/auth', () => ({
   auth: {},
 }));
 
+jest.mock('../../firebase', () => ({
+  auth: {},
+}));
+
 jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(),
 }));
