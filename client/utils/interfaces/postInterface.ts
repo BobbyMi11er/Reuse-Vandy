@@ -13,7 +13,8 @@ export const fetchPosts = async (
   user_firebase_id?: string,
   min_price?: number,
   max_price?: number,
-  size?: string
+  size?: string,
+  sort_price?: string
 ): Promise<PostType[]> => {
   try {
     // Construct query parameters
@@ -27,6 +28,7 @@ export const fetchPosts = async (
     if (max_price !== undefined)
       queryParams.append("max_price", max_price.toString());
     if (size) queryParams.append("size", size);
+    if (sort_price) queryParams.append("sort_price", sort_price);
 
     const url = `${POSTS_API_URL}?${queryParams.toString()}`;
     const response = await fetch(url, {
@@ -97,7 +99,7 @@ export const createPost = async (
   post: PostType
 ): Promise<PostType> => {
   try {
-    console.log("post", post)
+    console.log("post", post);
     const response = await fetch(POSTS_API_URL, {
       method: "POST",
       headers: {

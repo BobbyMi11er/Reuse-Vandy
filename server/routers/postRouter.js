@@ -1,6 +1,6 @@
 const express = require("express");
 const pool = require("../connection"); // Import the MySQL connection pool
-const uploadMiddleware = require('../middleware/fileUpload');
+const uploadMiddleware = require("../middleware/fileUpload");
 
 const postRouter = express.Router();
 
@@ -38,8 +38,15 @@ postRouter.post("/", async (req, res) => {
 
 // Get all posts with optional search, filter by color, filter by user, and include price and size
 postRouter.get("/", async (req, res) => {
-  const { search, color, user_firebase_id, min_price, max_price, size } =
-    req.query;
+  const {
+    search,
+    color,
+    user_firebase_id,
+    min_price,
+    max_price,
+    size,
+    sort_price,
+  } = req.query;
   try {
     let query = "SELECT * FROM Post WHERE 1=1"; // Base query
     const queryParams = [];
@@ -74,7 +81,12 @@ postRouter.get("/", async (req, res) => {
       queryParams.push(size);
     }
 
-    query += " ORDER BY created_at DESC";
+    if (sort_price && ["asc", "desc"].includes(sort_price.toLowerCase())) {
+      query += ` ORDER BY price ${sort_price.toUpperCase()}, created_at DESC`;
+    } else {
+      query += " ORDER BY created_at DESC";
+    }
+
     const [posts] = await pool.execute(query, queryParams);
     res.status(200).json(posts);
   } catch (error) {
@@ -171,24 +183,30 @@ postRouter.delete("/:post_id", async (req, res) => {
   }
 });
 
-postRouter.post('/fileUpload', uploadMiddleware.single('file'), async (req, res) => {
-  console.log("HERE")
-  if (!req.file) {
-    return res.status(403).json({ status: false, error: 'Please upload a file' });
+postRouter.post(
+  "/fileUpload",
+  uploadMiddleware.single("file"),
+  async (req, res) => {
+    console.log("HERE");
+    if (!req.file) {
+      return res
+        .status(403)
+        .json({ status: false, error: "Please upload a file" });
+    }
+
+    const data = {
+      url: req.file.location, // URL of the uploaded file in S3
+      type: req.file.mimetype,
+    };
+
+    console.log("data", data);
+
+    try {
+      res.json({ status: true, data });
+    } catch (error) {
+      res.status(500).json({ status: false, error: "File upload failed" });
+    }
   }
-
-  const data = {
-    url: req.file.location, // URL of the uploaded file in S3
-    type: req.file.mimetype,
-  };
-
-  console.log("data", data)
-
-  try {
-    res.json({ status: true, data });
-  } catch (error) {
-    res.status(500).json({ status: false, error: 'File upload failed' });
-  }
-});
+);
 
 module.exports = postRouter;

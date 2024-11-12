@@ -119,6 +119,12 @@ const AccountPage = () => {
     </View>
   );
 
+  const handlePostDelete = (deletedPostId: number) => {
+    setUserPosts((prevPosts) =>
+      prevPosts.filter((post) => post.post_id !== deletedPostId)
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -237,7 +243,12 @@ const AccountPage = () => {
         <Text style={styles.name}>My Posts</Text>
         <View style={styles.cardContainer}>
           {userPosts.map((item) => (
-            <Card key={item.post_id} {...item} page="account" />
+            <Card
+              key={item.post_id}
+              {...item}
+              page="account"
+              onDelete={handlePostDelete}
+            />
           ))}
         </View>
       </ScrollView>
