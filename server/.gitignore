@@ -2,3 +2,4 @@
 node_modules/
 firebase/serviceAccountKey.json
 ./firebase/serviceAccountKey.json
+.nyc_output

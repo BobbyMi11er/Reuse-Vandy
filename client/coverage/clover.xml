@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1731391165359" clover="3.2.0">
+  <project timestamp="1731391165359" name="All files">
+    <metrics statements="48" coveredstatements="48" conditionals="14" coveredconditionals="13" methods="13" coveredmethods="13" elements="75" coveredelements="74" complexity="0" loc="48" ncloc="48" packages="1" files="3" classes="3"/>
+    <file name="Card.tsx" path="C:\Users\mseok\Documents\Vanderbilt 2024-2025\Semester 1\SWE\Reuse-Vandy\client\components\Card.tsx">
+      <metrics statements="18" coveredstatements="18" conditionals="10" coveredconditionals="9" methods="3" coveredmethods="3"/>
+      <line num="30" count="1" type="stmt"/>
+      <line num="42" count="8" type="stmt"/>
+      <line num="44" count="8" type="stmt"/>
+      <line num="45" count="2" type="stmt"/>
+      <line num="46" count="2" type="stmt"/>
+      <line num="47" count="2" type="stmt"/>
+      <line num="50" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="51" count="1" type="stmt"/>
+      <line num="54" count="1" type="stmt"/>
+      <line num="55" count="1" type="stmt"/>
+      <line num="57" count="1" type="stmt"/>
+      <line num="58" count="1" type="stmt"/>
+      <line num="63" count="8" type="cond" truecount="2" falsecount="0"/>
+      <line num="67" count="1" type="stmt"/>
+      <line num="71" count="8" type="stmt"/>
+      <line num="73" count="8" type="stmt"/>
+      <line num="78" count="2" type="stmt"/>
+      <line num="134" count="1" type="stmt"/>
+    </file>
+    <file name="DeletePopup.tsx" path="C:\Users\mseok\Documents\Vanderbilt 2024-2025\Semester 1\SWE\Reuse-Vandy\client\components\DeletePopup.tsx">
+      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+      <line num="25" count="1" type="stmt"/>
+      <line num="30" count="6" type="stmt"/>
+      <line num="31" count="2" type="stmt"/>
+      <line num="32" count="2" type="stmt"/>
+      <line num="33" count="2" type="stmt"/>
+      <line num="34" count="1" type="stmt"/>
+      <line num="35" count="1" type="stmt"/>
+      <line num="37" count="1" type="stmt"/>
+      <line num="41" count="6" type="stmt"/>
+      <line num="48" count="1" type="stmt"/>
+      <line num="49" count="1" type="stmt"/>
+      <line num="61" count="2" type="stmt"/>
+      <line num="68" count="1" type="stmt"/>
+      <line num="78" count="1" type="stmt"/>
+    </file>
+    <file name="SellerPopup.tsx" path="C:\Users\mseok\Documents\Vanderbilt 2024-2025\Semester 1\SWE\Reuse-Vandy\client\components\SellerPopup.tsx">
+      <metrics statements="16" coveredstatements="16" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
+      <line num="15" count="1" type="stmt"/>
+      <line num="21" count="10" type="stmt"/>
+      <line num="23" count="10" type="stmt"/>
+      <line num="24" count="5" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="27" count="4" type="stmt"/>
+      <line num="29" count="1" type="stmt"/>
+      <line num="30" count="1" type="stmt"/>
+      <line num="34" count="10" type="stmt"/>
+      <line num="35" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="10" type="stmt"/>
+      <line num="45" count="1" type="stmt"/>
+      <line num="46" count="1" type="stmt"/>
+      <line num="72" count="1" type="stmt"/>
+      <line num="82" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

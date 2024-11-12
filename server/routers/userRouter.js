@@ -53,7 +53,7 @@ userRouter.post("/", async (req, res) => {
       user_firebase_id: insertResult.insertId,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ message: "Failed to create user", err });
   }
 });
@@ -85,6 +85,8 @@ userRouter.post("/update/:id", async (req, res) => {
       userId,
     ]);
 
+    // console.log(result)
+
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: "User not found",
@@ -99,7 +101,7 @@ userRouter.post("/update/:id", async (req, res) => {
 
     res.status(200).json(updatedUser[0]);
   } catch (err) {
-    console.error("Error updating user:", err);
+    // console.error("Error updating user:", err);
     res.status(500).json({
       message: "Failed to update user",
       error: err.message,

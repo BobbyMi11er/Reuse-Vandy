@@ -6,10 +6,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageSourcePropType,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SellerPopup from "./SellerPopup";
 import DeletePopup from "./DeletePopup";
+import { getToken } from "../firebase";
+import { deletePost } from "@/utils/interfaces/postInterface";
 
 interface CardProps {
   post_id: number;
@@ -17,9 +20,11 @@ interface CardProps {
   price: number;
   size: string;
   image_url: string;
+  description: string;
   created_at: Date;
   user_firebase_id: string;
   page: string;
+  onDelete?: (postId: number) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -28,35 +33,98 @@ const Card: React.FC<CardProps> = ({
   price,
   size,
   image_url,
+  description,
   created_at,
   user_firebase_id,
   page,
+  onDelete,
 }) => {
+  const createdAtDate = new Date(created_at);
+
+  const handleDelete = async () => {
+    try {
+      const token = await getToken();
+      await deletePost(token!, post_id);
+
+      // Call the onDelete callback to update parent state
+      if (onDelete) {
+        onDelete(post_id);
+      }
+
+      Alert.alert("Post Deleted");
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      Alert.alert("Failed to delete post. Please try again.");
+    }
+  };
+
   // image_url not in image storage
-  if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
-    image_url = "https://reuse-vandy.s3.us-east-2.amazonaws.com/adaptive-icon.png"
+  if (
+    image_url.length < 19 ||
+    image_url.substring(0, 19) != "https://reuse-vandy"
+  ) {
+    image_url =
+      "https://reuse-vandy.s3.us-east-2.amazonaws.com/adaptive-icon.png";
   }
 
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={() => setModalVisible(true)}>
+    <TouchableOpacity
+      testID="card-touchable"
+      style={styles.card}
+      activeOpacity={0.7}
+      onPress={() => setModalVisible(true)}
+    >
       <Image
-        source={{uri: image_url}}
+        testID="card-image"
+        source={{ uri: image_url }}
         style={styles.image}
       />
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.price}>${price}</Text>
-        <Text style={styles.size}>{size}</Text>
-        {/* <Text style={styles.time}>{created_at.toLocaleString()}</Text> */}
+        <Text testID="card-title" style={styles.title}>
+          {title}
+        </Text>
+        <Text testID="card-price" style={styles.price}>
+          ${price}
+        </Text>
+        <Text testID="card-time" style={styles.time}>
+          {createdAtDate.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </Text>
       </View>
-      {page == "marketplace" ? 
-        <SellerPopup modalVisible={modalVisible} setModalVisible={setModalVisible} userId={user_firebase_id}/>
-        : <DeletePopup modalVisible={modalVisible} setModalVisible={setModalVisible} postId={post_id} />
-      }
-       
-      <TouchableOpacity style={styles.heartIcon}>
+      {page == "marketplace" ? (
+        <SellerPopup
+          testID="seller-popup"
+          description={description}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          userId={user_firebase_id}
+        />
+      ) : (
+        <DeletePopup
+          testID="delete-popup"
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          postId={post_id}
+        />
+      )}
+
+      {page !== "marketplace" && (
+        <TouchableOpacity
+          testID="delete-icon"
+          style={styles.deleteIcon}
+          onPress={handleDelete}
+        >
+          <Ionicons name="close-circle" size={24} color="red" />
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity testID="heart-icon" style={styles.heartIcon}>
         <Ionicons name="heart-outline" size={24} color="white" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -85,6 +153,7 @@ const styles = StyleSheet.create({
   price: {
     fontWeight: "bold",
     color: "#333",
+    marginBottom: 20,
   },
   size: {
     color: "#FFF",
@@ -100,6 +169,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 60,
     right: 5,
+  },
+  deleteIcon: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    zIndex: 1,
   },
 });
 

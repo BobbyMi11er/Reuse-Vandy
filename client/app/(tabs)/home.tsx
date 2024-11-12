@@ -24,6 +24,7 @@ import { debounce } from "lodash";
 interface FilterState {
   minPrice: string;
   maxPrice: string;
+  sortPrice?: string;
 }
 
 const MarketplacePage = () => {
@@ -38,10 +39,12 @@ const MarketplacePage = () => {
   const [filters, setFilters] = useState<FilterState>({
     minPrice: "",
     maxPrice: "",
+    sortPrice: undefined,
   });
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     minPrice: "",
     maxPrice: "",
+    sortPrice: undefined,
   });
 
   useEffect(() => {
@@ -68,7 +71,9 @@ const MarketplacePage = () => {
         undefined, // color
         undefined, // user_firebase_id
         filters?.minPrice ? Number(filters.minPrice) : undefined,
-        filters?.maxPrice ? Number(filters.maxPrice) : undefined
+        filters?.maxPrice ? Number(filters.maxPrice) : undefined,
+        undefined, // size
+        filters?.sortPrice
       );
       setPosts(fetchedPosts);
     } catch (error: any) {
@@ -77,6 +82,28 @@ const MarketplacePage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getSortIcon = () => {
+    if (!activeFilters.sortPrice) return "swap-vertical-outline";
+    return activeFilters.sortPrice === "asc" ? "arrow-up" : "arrow-down";
+  };
+
+  const handleSortToggle = () => {
+    const currentSort = activeFilters.sortPrice;
+    const newSort = !currentSort
+      ? "asc"
+      : currentSort === "asc"
+      ? "desc"
+      : undefined;
+
+    const newFilters = {
+      ...activeFilters,
+      sortPrice: newSort,
+    };
+
+    setFilters(newFilters);
+    setActiveFilters(newFilters);
   };
 
   const debouncedSearch = debounce((query: string) => {
@@ -111,13 +138,24 @@ const MarketplacePage = () => {
     setFilterModalVisible(false);
   };
 
-  const hasActiveFilters = activeFilters.minPrice || activeFilters.maxPrice;
+  const hasActiveFilters =
+    activeFilters.minPrice || activeFilters.maxPrice || activeFilters.sortPrice;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Marketplace</Text>
         <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={handleSortToggle}
+          >
+            <Ionicons
+              name={getSortIcon()}
+              size={24}
+              color={activeFilters.sortPrice ? "#F4A71D" : "black"}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setFilterModalVisible(true)}
@@ -166,6 +204,8 @@ const MarketplacePage = () => {
             {[
               activeFilters.minPrice && `Min $${activeFilters.minPrice}`,
               activeFilters.maxPrice && `Max $${activeFilters.maxPrice}`,
+              activeFilters.sortPrice &&
+                `Price ${activeFilters.sortPrice === "asc" ? "↑" : "↓"}`,
             ]
               .filter(Boolean)
               .join(", ")}
@@ -208,7 +248,7 @@ const MarketplacePage = () => {
 
       {/* Filter Modal */}
       <Modal
-        animationType="slide"
+        // animationType="slide"
         transparent={true}
         visible={filterModalVisible}
         onRequestClose={() => setFilterModalVisible(false)}
@@ -298,6 +338,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
+  },
+  iconButton: {
+    padding: 4,
   },
   title: {
     fontSize: 24,
