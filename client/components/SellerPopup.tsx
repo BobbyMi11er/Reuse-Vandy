@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
 
 interface PopupProps {
+  testID?: string;
   modalVisible: boolean;
   setModalVisible: (value: boolean) => void;
   userId: string;
@@ -20,9 +21,14 @@ const SellerPopup: React.FC<PopupProps> = ({
   const [userData, setUserData] = useState<UserType | null>(null);
 
   const getSellerInfo = async () => {
-    const token = await getToken();
-    const userData = await getUserById(token!, userId);
-    setUserData(userData);
+    try {
+      const token = await getToken();
+      const userData = await getUserById(token!, userId);
+      setUserData(userData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setUserData(null); // or some other default value
+    }
   };
 
   useEffect(() => {
@@ -31,6 +37,7 @@ const SellerPopup: React.FC<PopupProps> = ({
 
   return (
     <Modal
+      testID="seller-popup-modal"
       animationType="fade"
       visible={modalVisible}
       transparent={true}
