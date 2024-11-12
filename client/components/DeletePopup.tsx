@@ -16,6 +16,7 @@ import { PostType } from "@/utils/models/postModel";
 import { deletePost } from "@/utils/interfaces/postInterface";
 
 interface PopupProps {
+  testID?: string;
   modalVisible: boolean;
   setModalVisible: (value: boolean) => void;
   postId: number;
@@ -27,15 +28,19 @@ const DeletePopup: React.FC<PopupProps> = ({
   postId,
 }) => {
   const handleDelete = async () => {
-    const token = await getToken();
-    await deletePost(token!, postId);
-    // TODO: need error handling probably
-    alert("Post Deleted");
-    setModalVisible(false);
+    try {
+      const token = await getToken();
+      await deletePost(token!, postId);
+      setModalVisible(false); // Ensure this line is executed
+      Alert.alert("Post Deleted");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <Modal
+      testID="delete-popup-modal"
       animationType="fade"
       visible={modalVisible}
       transparent={true}

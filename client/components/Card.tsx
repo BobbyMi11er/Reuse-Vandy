@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageSourcePropType,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SellerPopup from "./SellerPopup";
@@ -50,11 +51,11 @@ const Card: React.FC<CardProps> = ({
         onDelete(post_id);
       }
 
-      alert("Post Deleted");
+      Alert.alert("Post Deleted");
       setModalVisible(false);
     } catch (error) {
       console.error("Error deleting post:", error);
-      alert("Failed to delete post. Please try again.");
+      Alert.alert("Failed to delete post. Please try again.");
     }
   };
 
@@ -71,15 +72,24 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <TouchableOpacity
+      testID="card-touchable"
       style={styles.card}
       activeOpacity={0.7}
       onPress={() => setModalVisible(true)}
     >
-      <Image source={{ uri: image_url }} style={styles.image} testID="image" />
+      <Image
+        testID="image"
+        source={{ uri: image_url }}
+        style={styles.image}
+      />
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.price}>${price}</Text>
-        <Text style={styles.time}>
+        <Text testID="card-title" style={styles.title}>
+          {title}
+        </Text>
+        <Text testID="card-price" style={styles.price}>
+          ${price}
+        </Text>
+        <Text testID="card-time" style={styles.time}>
           {createdAtDate.toLocaleDateString("en-US", {
             month: "long",
             day: "numeric",
@@ -89,6 +99,7 @@ const Card: React.FC<CardProps> = ({
       </View>
       {page == "marketplace" ? (
         <SellerPopup
+          testID="seller-popup"
           description={description}
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
@@ -96,6 +107,7 @@ const Card: React.FC<CardProps> = ({
         />
       ) : (
         <DeletePopup
+          testID="delete-popup"
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           postId={post_id}
@@ -103,12 +115,17 @@ const Card: React.FC<CardProps> = ({
       )}
 
       {page !== "marketplace" && (
-        <TouchableOpacity style={styles.deleteIcon} onPress={handleDelete}>
+        <TouchableOpacity
+          testID="delete-icon"
+          style={styles.deleteIcon}
+          onPress={handleDelete}
+        >
           <Ionicons name="close-circle" size={24} color="red" />
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity style={styles.heartIcon} testID="heart-icon">
+
+      <TouchableOpacity testID="heart-icon" style={styles.heartIcon}>
         <Ionicons name="heart-outline" size={24} color="white" />
       </TouchableOpacity>
     </TouchableOpacity>
