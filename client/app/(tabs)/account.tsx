@@ -20,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import Notifications from "@/components/notificationsModal";
 import { auth, getToken, getUserId } from "../../firebase";
 import { router } from "expo-router";
+import ProfileImagePopup from "@/components/profileImagePopup";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -31,10 +32,19 @@ const AccountPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("")
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (userData) {
       setEditedUser(userData);
+      // image_url not in image storage
+      let image_url = userData.profile_img_url;
+      if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
+        image_url = ""
+      }
+      setImageUrl(image_url)
     }
   }, [userData]);
 
@@ -71,7 +81,6 @@ const AccountPage = () => {
   }, [isFocused]);
 
   const handleSignOut = async () => {
-    console.log("here");
     await auth.signOut();
     router.replace("/(auth)/landing");
   };
@@ -134,17 +143,26 @@ const AccountPage = () => {
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProfileImagePopup modalVisible={modalVisible} 
+                setModalVisible={setModalVisible} 
+                userId={userId!}
+                userData={userData!}/>
         <View style={styles.content}>
           <View style={styles.profileImageContainer}>
+          {imageUrl == "" ? 
             <Image
               source={require("@/assets/images/profile-placeholder.png")}
               style={styles.profileImage}
-            />
-            {isEditing && (
-              <TouchableOpacity style={styles.editButton}>
+            /> : 
+            <Image
+            source={{uri: imageUrl}}
+            style={styles.profileImage}
+          />
+            }
+            
+              <TouchableOpacity style={styles.editButton} onPress={() => {setModalVisible(true)}}>
                 <Ionicons name="pencil" size={16} color="white" />
               </TouchableOpacity>
-            )}
             {/* <TouchableOpacity style={styles.editButton}>
               <Ionicons name="pencil" size={16} color="white" />
             </TouchableOpacity> */}
@@ -207,7 +225,7 @@ const AccountPage = () => {
               style={styles.button}
               onPress={() => setIsEditing(true)}
             >
-              <Text style={styles.buttonText}>Edit Profile</Text>
+              <Text style={styles.buttonText}>Edit Profile Information</Text>
             </TouchableOpacity>
           )}
 
@@ -302,6 +320,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 50
   },
   editButton: {
     position: "absolute",
