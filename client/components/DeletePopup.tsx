@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
 import { deletePost } from "@/utils/interfaces/postInterface";
+import EditPostsModal from "./editPosts";
 
 interface PopupProps {
   testID?: string;
@@ -27,6 +28,8 @@ const DeletePopup: React.FC<PopupProps> = ({
   setModalVisible,
   postId,
 }) => {
+  const [editModalVisible, setEditModalVisible] = useState(false)
+  
   const handleDelete = async () => {
     try {
       const token = await getToken();
@@ -38,6 +41,9 @@ const DeletePopup: React.FC<PopupProps> = ({
     }
   };
 
+    const handleEditPosts = () => {
+      setEditModalVisible(true)
+    }
   return (
     <Modal
       testID="delete-popup-modal"
@@ -50,6 +56,7 @@ const DeletePopup: React.FC<PopupProps> = ({
       }}
     >
       <View style={styles.overlay}>
+        <EditPostsModal modalVisible={editModalVisible} setModalVisible={setEditModalVisible} postId={postId}/>
         <View style={styles.modalView}>
           <View>
             <Text style={styles.title}>Do you want to change this post?</Text>

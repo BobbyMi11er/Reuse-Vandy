@@ -1,4 +1,3 @@
-// components/__tests__/Card.test.tsx
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import Card from "../Card";
@@ -39,23 +38,10 @@ describe("Card", () => {
     jest.clearAllMocks();
   });
 
-  //   it("renders correctly with marketplace props", () => {
-  //     const { getByText, getByTestId, queryByTestId } = render(
-  //       <Card {...mockProps} />
-  //     );
-
-  //     expect(getByText("Test Item")).toBeTruthy();
-  //     expect(getByText("$99.99")).toBeTruthy();
-  //     expect(getByText("March 15, 2024")).toBeTruthy();
-  //     // Delete icon should not be visible in marketplace
-  //     expect(queryByTestId("delete-icon")).toBeNull();
-  //   });
-
   it("renders correctly with profile page props", () => {
     const profileProps = { ...mockProps, page: "profile" };
     const { getByTestId } = render(<Card {...profileProps} />);
 
-    // Delete icon should be visible in profile
     expect(getByTestId("delete-icon")).toBeTruthy();
   });
 
