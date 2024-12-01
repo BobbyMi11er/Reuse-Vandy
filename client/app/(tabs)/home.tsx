@@ -28,7 +28,6 @@ interface FilterState {
 }
 
 const MarketplacePage = () => {
-  const [notificationsModalVisible, setNotificationsVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
@@ -166,9 +165,6 @@ const MarketplacePage = () => {
               color={hasActiveFilters ? "#F4A71D" : "black"}
             />
             {hasActiveFilters && <View style={styles.filterBadge} />}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setNotificationsVisible(true)}>
-            <Ionicons name="notifications-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>
       </View>
@@ -313,10 +309,6 @@ const MarketplacePage = () => {
           </View>
         </KeyboardAvoidingView>
       </Modal>
-      <Notifications
-        modalVisible={notificationsModalVisible}
-        setModalVisible={setNotificationsVisible}
-      />
     </SafeAreaView>
   );
 };

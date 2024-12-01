@@ -12,7 +12,10 @@ import {
 import Card from "@/components/Card";
 import { Ionicons } from "@expo/vector-icons";
 import { getUserById, updateUser } from "@/utils/interfaces/userInterface";
-import { fetchPostById, fetchPostByUserId } from "@/utils/interfaces/postInterface";
+import {
+  fetchPostById,
+  fetchPostByUserId,
+} from "@/utils/interfaces/postInterface";
 import { useState, useEffect } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
@@ -26,7 +29,6 @@ import { getLikesByUser } from "@/utils/interfaces/likesInterface";
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
-  const [notificationsModalVisible, setNotificationsVisible] = useState(false);
 
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const [likedPosts, setLikedPosts] = useState<PostType[]>([]);
@@ -37,7 +39,7 @@ const AccountPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrl, setImageUrl] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -46,10 +48,14 @@ const AccountPage = () => {
       setEditedUser(userData);
       // image_url not in image storage
       let image_url = userData.profile_img_url;
-      if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
-        image_url = ""
+      if (
+        image_url &&
+        (image_url.length < 19 ||
+          image_url.substring(0, 19) != "https://reuse-vandy")
+      ) {
+        image_url = "";
       }
-      setImageUrl(image_url)
+      setImageUrl(image_url);
     }
   }, [userData]);
 
@@ -79,13 +85,13 @@ const AccountPage = () => {
         const likedPosts = [];
         for (const like of likedPostIds) {
           const res = await fetchPostById(token!, like.post_id);
-          likedPosts.push(res)
+          likedPosts.push(res);
         }
 
-        setLikeChanged(false)
+        setLikeChanged(false);
         setUserData(userData);
         setUserPosts(userPosts);
-        setLikedPosts(likedPosts)
+        setLikedPosts(likedPosts);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -153,34 +159,33 @@ const AccountPage = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Account</Text>
-        <TouchableOpacity onPress={() => setNotificationsVisible(true)}>
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProfileImagePopup modalVisible={modalVisible} 
-                setModalVisible={setModalVisible} 
-                userId={userId!}
-                userData={userData!}/>
+        <ProfileImagePopup
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          userId={userId!}
+          userData={userData!}
+        />
         <View style={styles.content}>
           <View style={styles.profileImageContainer}>
-          {imageUrl == "" ? 
-            <Image
-              source={require("@/assets/images/profile-placeholder.png")}
-              style={styles.profileImage}
-            /> : 
-            <Image
-            source={{uri: imageUrl}}
-            style={styles.profileImage}
-          />
-            }
-            
-              <TouchableOpacity style={styles.editButton} onPress={() => {setModalVisible(true)}}>
-                <Ionicons name="pencil" size={16} color="white" />
-              </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.editButton}>
+            {imageUrl == "" ? (
+              <Image
+                source={require("@/assets/images/profile-placeholder.png")}
+                style={styles.profileImage}
+              />
+            ) : (
+              <Image source={{ uri: imageUrl }} style={styles.profileImage} />
+            )}
+
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            >
               <Ionicons name="pencil" size={16} color="white" />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
           <Text style={styles.name}>
             {userData ? userData.name : "Error Loading Name"}
@@ -192,12 +197,10 @@ const AccountPage = () => {
             "Enter your name"
           )}
 
-          {renderInput(
-            "EMAIL",
-            editedUser?.email || "",
-            "email",
-            "Enter your email"
-          )}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>{"EMAIL"}</Text>
+            <Text style={styles.input}>{editedUser?.email || ""}</Text>
+          </View>
 
           {renderInput(
             "PHONE NUMBER",
@@ -243,72 +246,45 @@ const AccountPage = () => {
               <Text style={styles.buttonText}>Edit Profile Information</Text>
             </TouchableOpacity>
           )}
-
-          {/* <View style={styles.inputContainer}>
-            <Text style={styles.label}>EMAIL</Text>
-            <TextInput
-              style={styles.input}
-              value={userData ? userData.email : "Error Loading Email"}
-              editable={false}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>PHONE NUMBER</Text>
-            <TextInput
-              style={styles.input}
-              value={
-                userData ? userData.phone_number : "Error Loading Phone Number"
-              }
-              editable={false}
-            />
-          </View> */}
-          {/* <TouchableOpacity style={styles.button} activeOpacity={0.7}>
-            <Text style={styles.buttonText}>Update Account</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
-            style={styles.sign_out_button}
+            style={styles.button}
             activeOpacity={0.7}
             onPress={() => handleSignOut()}
           >
             <Text style={styles.buttonText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView style={{width: "100%"}}>
-        <Text style={styles.name}>My Posts</Text>
-        <View style={styles.cardContainer}>
-          {userPosts.map((item) => (
-            <Card
-              key={item.post_id}
-              {...item}
-              page="account"
-              onDelete={handlePostDelete}
-            />
-          ))}
-        </View>
-        </ScrollView>
-        {likedPosts.length > 0 ? 
-        <ScrollView style={{width: "100%"}}>
-          <Text style={styles.name}>Liked Posts</Text>
+        <ScrollView style={{ width: "100%" }}>
+          <Text style={styles.name}>My Posts</Text>
           <View style={styles.cardContainer}>
-            {likedPosts.map((item) => (
+            {userPosts.map((item) => (
               <Card
                 key={item.post_id}
                 {...item}
-                page="marketplace"
-                setLikeChanged = {setLikeChanged}
+                page="account"
+                onDelete={handlePostDelete}
               />
             ))}
           </View>
         </ScrollView>
-        : 
-        <View /> }
-       
-       
+        {likedPosts.length > 0 ? (
+          <ScrollView style={{ width: "100%" }}>
+            <Text style={styles.name}>Liked Posts</Text>
+            <View style={styles.cardContainer}>
+              {likedPosts.map((item) => (
+                <Card
+                  key={item.post_id}
+                  {...item}
+                  page="marketplace"
+                  setLikeChanged={setLikeChanged}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        ) : (
+          <View />
+        )}
       </ScrollView>
-      <Notifications
-        modalVisible={notificationsModalVisible}
-        setModalVisible={setNotificationsVisible}
-      />
     </SafeAreaView>
   );
 };
@@ -355,7 +331,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 50
+    borderRadius: 50,
   },
   editButton: {
     position: "absolute",
@@ -381,13 +357,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4A71D",
   },
   cancelButton: {
-    backgroundColor: "#gray",
+    backgroundColor: "#ddd",
   },
   name: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
-    alignSelf: "center"
+    alignSelf: "center",
   },
 
   inputContainer: {
@@ -413,6 +389,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     borderRadius: 5,
+    marginBottom: 10,
   },
   sign_out_button: {
     marginTop: 20,
