@@ -12,7 +12,7 @@ import {
 import Card from "@/components/Card";
 import { Ionicons } from "@expo/vector-icons";
 import { getUserById, updateUser } from "@/utils/interfaces/userInterface";
-import { fetchPostByUserId } from "@/utils/interfaces/postInterface";
+import { fetchPostById, fetchPostByUserId } from "@/utils/interfaces/postInterface";
 import { useState, useEffect } from "react";
 import { UserType } from "@/utils/models/userModel";
 import { PostType } from "@/utils/models/postModel";
@@ -21,12 +21,17 @@ import Notifications from "@/components/notificationsModal";
 import { auth, getToken, getUserId } from "../../firebase";
 import { router } from "expo-router";
 import ProfileImagePopup from "@/components/profileImagePopup";
+import { getLikesByUser } from "@/utils/interfaces/likesInterface";
 
 const AccountPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
   const [notificationsModalVisible, setNotificationsVisible] = useState(false);
+
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
+  const [likedPosts, setLikedPosts] = useState<PostType[]>([]);
+  const [likeChanged, setLikeChanged] = useState(false);
+
   const navigation = useNavigation();
   const [isFocused, setIsFocused] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -69,8 +74,18 @@ const AccountPage = () => {
         const token = await getToken();
         const userData = await getUserById(token!, userId!);
         const userPosts = await fetchPostByUserId(token!, userId!);
+        const likedPostIds = await getLikesByUser(token!, userId!);
+
+        const likedPosts = [];
+        for (const like of likedPostIds) {
+          const res = await fetchPostById(token!, like.post_id);
+          likedPosts.push(res)
+        }
+
+        setLikeChanged(false)
         setUserData(userData);
         setUserPosts(userPosts);
+        setLikedPosts(likedPosts)
       } catch (error) {
         console.error("Error:", error);
       }
@@ -78,7 +93,7 @@ const AccountPage = () => {
     if (isFocused) {
       fetchUserData();
     }
-  }, [isFocused]);
+  }, [isFocused, likeChanged]);
 
   const handleSignOut = async () => {
     await auth.signOut();
@@ -258,6 +273,7 @@ const AccountPage = () => {
             <Text style={styles.buttonText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
+        <ScrollView style={{width: "100%"}}>
         <Text style={styles.name}>My Posts</Text>
         <View style={styles.cardContainer}>
           {userPosts.map((item) => (
@@ -269,6 +285,25 @@ const AccountPage = () => {
             />
           ))}
         </View>
+        </ScrollView>
+        {likedPosts.length > 0 ? 
+        <ScrollView style={{width: "100%"}}>
+          <Text style={styles.name}>Liked Posts</Text>
+          <View style={styles.cardContainer}>
+            {likedPosts.map((item) => (
+              <Card
+                key={item.post_id}
+                {...item}
+                page="marketplace"
+                setLikeChanged = {setLikeChanged}
+              />
+            ))}
+          </View>
+        </ScrollView>
+        : 
+        <View /> }
+       
+       
       </ScrollView>
       <Notifications
         modalVisible={notificationsModalVisible}
@@ -352,6 +387,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
+    alignSelf: "center"
   },
 
   inputContainer: {

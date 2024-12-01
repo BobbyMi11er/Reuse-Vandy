@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -13,7 +13,7 @@ import SellerPopup from "./SellerPopup";
 import DeletePopup from "./DeletePopup";
 import { auth, getToken } from "../firebase";
 import { deletePost } from "@/utils/interfaces/postInterface";
-import { addLike, deleteLike } from "@/utils/interfaces/likesInterface";
+import { addLike, deleteLike, getLikesByPost } from "@/utils/interfaces/likesInterface";
 
 interface CardProps {
   post_id: number;
@@ -26,6 +26,7 @@ interface CardProps {
   user_firebase_id: string;
   page: string;
   onDelete?: (postId: number) => void;
+  setLikeChanged?: (changed: boolean) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -39,10 +40,38 @@ const Card: React.FC<CardProps> = ({
   user_firebase_id,
   page,
   onDelete,
+  setLikeChanged,
 }) => {
   const createdAtDate = new Date(created_at);
 
   const [liked, setLiked] = React.useState(false)
+
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      try {
+        const user_id = auth.currentUser?.uid;
+        if (!user_id) return;
+  
+        const token = await getToken();
+        if (!token) return;
+  
+        const res = await getLikesByPost(token, post_id);
+  
+        for (const like of res) {
+          if (like.user_firebase_id === user_id) {
+            setLiked(true);
+            return;
+          }
+        }
+  
+        setLiked(false);
+      } catch (error) {
+        console.error('Error checking if post is liked:', error);
+      }
+    };
+  
+    checkIfLiked();
+  }, [post_id, auth.currentUser]);  
 
   const handleLike = async () => {
     const token = await getToken();
@@ -60,6 +89,9 @@ const Card: React.FC<CardProps> = ({
             post_id: post_id
           })
           setLiked(false)
+          if (setLikeChanged) {
+            setLikeChanged(true);
+          }
         } catch (error) {
           Alert.alert(error + "")
         }
@@ -72,6 +104,9 @@ const Card: React.FC<CardProps> = ({
             post_id: post_id
           })
           setLiked(true)
+          if (setLikeChanged) {
+            setLikeChanged(true);
+          }
 
         } catch(error) {
           Alert.alert(error + "")
