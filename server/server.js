@@ -5,11 +5,14 @@ const userRouter = require('./routers/userRouter.js');
 const upload = require("./middleware/fileUpload.js")
 const { verifyToken } = require('./firebase/verifyToken.js'); 
 const likesRouter = require('./routers/likesRouter.js');
+const cors = require('cors')
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+
+app.use(cors())
 
 // Authentication middleware
 if (process.env.NODE_ENV !== 'test') {

@@ -11,8 +11,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SellerPopup from "./SellerPopup";
 import DeletePopup from "./DeletePopup";
-import { getToken } from "../firebase";
+import { auth, getToken } from "../firebase";
 import { deletePost } from "@/utils/interfaces/postInterface";
+import { addLike, deleteLike } from "@/utils/interfaces/likesInterface";
 
 interface CardProps {
   post_id: number;
@@ -40,6 +41,44 @@ const Card: React.FC<CardProps> = ({
   onDelete,
 }) => {
   const createdAtDate = new Date(created_at);
+
+  const [liked, setLiked] = React.useState(false)
+
+  const handleLike = async () => {
+    const token = await getToken();
+    const currUser = auth.currentUser?.uid;
+
+    if (currUser === undefined) {
+      Alert.alert("Not signed in")
+    }
+    else {
+      if (liked) {
+        // dislike the post (aka delete like)
+        try {
+          await deleteLike(token!, {
+            user_firebase_id: currUser,
+            post_id: post_id
+          })
+          setLiked(false)
+        } catch (error) {
+          Alert.alert(error + "")
+        }
+      }
+      else {
+        // like the post
+        try {
+          await addLike(token!, {
+            user_firebase_id: currUser,
+            post_id: post_id
+          })
+          setLiked(true)
+
+        } catch(error) {
+          Alert.alert(error + "")
+        }
+      }
+    }
+  }
 
   const handleDelete = async () => {
     try {
@@ -125,8 +164,11 @@ const Card: React.FC<CardProps> = ({
       )}
 
 
-      <TouchableOpacity testID="heart-icon" style={styles.heartIcon}>
-        <Ionicons name="heart-outline" size={24} color="white" />
+      <TouchableOpacity testID="heart-icon" style={styles.heartIcon} onPress={handleLike}>
+        {liked ? 
+          <Ionicons name="heart" size={24} color="white" /> : 
+          <Ionicons name="heart-outline" size={24} color="white" />
+        }
       </TouchableOpacity>
     </TouchableOpacity>
   );
