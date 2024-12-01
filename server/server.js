@@ -4,15 +4,11 @@ const postRouter = require('./routers/postRouter'); // Import the post routes
 const userRouter = require('./routers/userRouter.js');
 const upload = require("./middleware/fileUpload.js")
 const { verifyToken } = require('./firebase/verifyToken.js'); 
-const likesRouter = require('./routers/likesRouter.js');
-const cors = require('cors')
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
-
-app.use(cors())
 
 // Authentication middleware
 if (process.env.NODE_ENV !== 'test') {
@@ -24,8 +20,6 @@ app.use('/posts', postRouter);
 
 // Use the userRouter for routes starting with /users
 app.use('/users', userRouter);
-
-app.use('/likes', likesRouter);
 
 // Example home route
 app.get('/', (req, res) => {

@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise')
 
 const pool = mysql.createPool({
     host: process.env.HOST_URL,
-    user: process.env.USER_NAME,
+    user: process.env.USER,
     password: process.env.PASSWORD,
     // timeout: 15,
     multipleStatements: true,
@@ -118,16 +118,5 @@ pool.getConnection((err,connection)=> {
 // }
 
 // updatePostTable();
-
-// likes Table creation query: 
-// CREATE TABLE Likes (
-// 	user_firebase_id VARCHAR(128),
-//     post_id INT,
-//     PRIMARY KEY (user_firebase_id, post_id),
-//     FOREIGN KEY (user_firebase_id) REFERENCES 
-// 		User(user_firebase_id),
-// 	FOREIGN KEY (post_id) REFERENCES
-// 		Post(post_id)
-// );
 
 module.exports = pool;
