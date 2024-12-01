@@ -63,7 +63,7 @@ const LoginPage = () => {
         <ScrollView contentContainerStyle={authStyles.scrollContent}>
           <View style={authStyles.content}>
             <View style={authStyles.topSection}>
-              <Text style={authStyles.title}>Login</Text>
+              <Text style={authStyles.title} testID="login-text">Login</Text>
               <Text style={authStyles.subtitle}>Welcome back to Reuse Vandy!</Text>
 
               <View style={authStyles.inputContainer}>
@@ -97,7 +97,7 @@ const LoginPage = () => {
                 activeOpacity={0.7}
                 onPress={() => handleSubmit()}
               >
-                <Text style={authStyles.buttonText}>Login</Text>
+                <Text style={authStyles.buttonText} testID="login-button">Login</Text>
               </TouchableOpacity>
               <Text style={authStyles.errorText}>{error}</Text>
               
