@@ -144,7 +144,7 @@ const RegistrationPage = () => {
                 activeOpacity={0.7}
                 onPress={() => handleSubmit()}
               >
-                <Text style={authStyles.buttonText}>Sign up</Text>
+                <Text style={authStyles.buttonText} testID="sign-up-button">Sign up</Text>
               </TouchableOpacity>
             </View>
           </View>
