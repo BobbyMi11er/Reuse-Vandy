@@ -46,10 +46,12 @@ const AccountPage = () => {
       setEditedUser(userData);
       // image_url not in image storage
       let image_url = userData.profile_img_url;
-      if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
-        image_url = ""
+      if (image_url !== null) {
+        if (image_url.length < 19 || image_url.substring(0, 19) != "https://reuse-vandy") {
+          image_url = ""
+        }
+        setImageUrl(image_url)
       }
-      setImageUrl(image_url)
     }
   }, [userData]);
 
