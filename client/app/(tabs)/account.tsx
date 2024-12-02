@@ -249,7 +249,7 @@ const AccountPage = () => {
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={styles.button}
+            style={styles.sign_out_button}
             activeOpacity={0.7}
             onPress={() => handleSignOut()}
           >
@@ -385,7 +385,6 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   button: {
-    // marginTop: 20,
     backgroundColor: "#F4A71D",
     paddingVertical: 15,
     width: "100%",
@@ -394,12 +393,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sign_out_button: {
-    marginTop: 20,
-    backgroundColor: "grey",
-    paddingVertical: 8,
-    width: "50%",
+    borderColor: "#F4A71D",
+    borderWidth: 2,
+    paddingVertical: 15,
+    width: "100%",
     alignItems: "center",
     borderRadius: 5,
+    marginBottom: 10,
   },
   buttonText: {
     fontSize: 16,
