@@ -125,9 +125,11 @@ pool.getConnection((err,connection)=> {
 //     post_id INT,
 //     PRIMARY KEY (user_firebase_id, post_id),
 //     FOREIGN KEY (user_firebase_id) REFERENCES 
-// 		User(user_firebase_id),
+// 		User(user_firebase_id)
+//         ON DELETE CASCADE,
 // 	FOREIGN KEY (post_id) REFERENCES
 // 		Post(post_id)
+//         ON DELETE CASCADE
 // );
 
 module.exports = pool;
