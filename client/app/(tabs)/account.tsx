@@ -115,14 +115,31 @@ const AccountPage = () => {
       setLoading(true);
       const token = await getToken();
 
-      // Call the updateUser function
-      await updateUser(token!, userId, editedUser);
+      var failedCheck = false;
 
-      // Update the local state with new data
-      setUserData(editedUser);
-      setIsEditing(false);
+      const phoneNumber = editedUser.phone_number;
 
-      alert("Your account has been updated successfully!");
+      if (phoneNumber.length != 10) {
+        alert("Phone number must be 10 characters long");
+        failedCheck = true;
+      }
+      const digits_only = (string: string) =>
+        [...string].every((c) => "0123456789".includes(c));
+      if (!digits_only(phoneNumber)) {
+        alert("Phone number should only contain numbers");
+        failedCheck = true;
+      }
+
+      if (!failedCheck) {
+        // Call the updateUser function
+        await updateUser(token!, userId, editedUser);
+
+        // Update the local state with new data
+        setUserData(editedUser);
+        setIsEditing(false);
+
+        alert("Your account has been updated successfully!");
+      }
     } catch (error) {
       console.error("Error updating account:", error);
       alert("Failed to update account. Please try again.");

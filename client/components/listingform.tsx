@@ -30,7 +30,7 @@ const ListingForm = () => {
   const [price, setPrice] = useState("");
   const [size, setSize] = useState("");
 
-  const [resetTrigger, setResetTrigger] = useState(false)
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   const imageUploadRef = useRef<{
     pickImage: () => void;
@@ -56,6 +56,17 @@ const ListingForm = () => {
     // Validate required fields
     if (!title || !price) {
       alert("Please fill out all required fields (title and price)");
+      return;
+    }
+
+    if (title.length > 100) {
+      alert("Title must be less than 100 characters");
+      return;
+    } else if (description.length > 500) {
+      alert("Description must be less than 500 characters");
+      return;
+    } else if (parseInt(price) >= 10000) {
+      alert("Price must be less than $10,000");
       return;
     }
 
@@ -104,8 +115,6 @@ const ListingForm = () => {
       setResetTrigger((prev) => !prev);
 
       alert("Listing created successfully!");
-
-
     } catch (error) {
       console.error("Error creating post (ListingForm):", error);
       alert("Failed to create listing. Please try again.");

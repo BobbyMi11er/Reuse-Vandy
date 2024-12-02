@@ -47,6 +47,17 @@ const RegistrationPage = () => {
       return;
     }
 
+    if (phoneNumber.length != 10) {
+      alert("Phone number must be 10 characters long");
+      return;
+    }
+    const digits_only = (string: string) =>
+      [...string].every((c) => "0123456789".includes(c));
+    if (!digits_only(phoneNumber)) {
+      alert("Phone number should only contain numbers");
+      return;
+    }
+
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -72,7 +83,16 @@ const RegistrationPage = () => {
 
       router.navigate("/login");
     } catch (error: any) {
-      alert("Failed to create user.");
+      if (error.code === "auth/email-already-in-use") {
+        alert("Email is already in use.");
+        return;
+      } else if (error.code === "auth/weak-password") {
+        alert("Password is too weak.");
+        return;
+      } else if (error.code === "auth/invalid-email") {
+        alert("Invalid email address.");
+        return;
+      }
     }
   };
 
@@ -144,7 +164,9 @@ const RegistrationPage = () => {
                 activeOpacity={0.7}
                 onPress={() => handleSubmit()}
               >
-                <Text style={authStyles.buttonText} testID="sign-up-button">Sign up</Text>
+                <Text style={authStyles.buttonText} testID="sign-up-button">
+                  Sign up
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
