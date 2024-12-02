@@ -1,4 +1,4 @@
-import React, { useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Button, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getIdToken } from 'firebase/auth';
@@ -13,10 +13,17 @@ interface FileObject {
 interface ImageUploadComponentProps {
   onImageUpload: (url: string | null) => void;
   onImageChoice: (url: string | null) => void;
+  resetTrigger: boolean;
 }
 
-const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice }: ImageUploadComponentProps, ref) => {
+const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice, resetTrigger }: ImageUploadComponentProps, ref) => {
   const [image, setImage] = useState<string | null>(null);
+
+  useEffect(()=> {
+    if (resetTrigger) {
+      setImage(null);
+    }
+  }, [resetTrigger])
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -33,7 +40,7 @@ const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice }: Image
   };
 
   const uploadImage = async (): Promise<string | null> => {
-    console.log("image", image)
+    // console.log("image", image)
     if (image) {
       const formData = new FormData();
       const file: FileObject = {
@@ -42,7 +49,7 @@ const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice }: Image
         type: 'image/jpeg',
       };
       formData.append('file', file as any);
-      console.log("here")
+      // console.log("here")
       const idToken = await auth.currentUser?.getIdToken();
       try {
         const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/posts/fileUpload`, {
@@ -53,13 +60,13 @@ const ImageUploadComponent = forwardRef(({ onImageUpload, onImageChoice }: Image
               Authorization: `Bearer ${idToken}`
           },
         });
-        console.log(response)
+        // console.log(response)
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
 
         const data = await response.json();
-        console.log("data", data)
+        // console.log("data", data)
         onImageUpload(data.data.url); // Pass the URL to parent component
         return data.data.url;
       } catch (error) {
