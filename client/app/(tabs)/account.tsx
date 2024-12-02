@@ -119,13 +119,14 @@ const AccountPage = () => {
 
       const phoneNumber = editedUser.phone_number;
 
-      if (phoneNumber.length > 10) {
-        alert("Phone number cannot be more than 10 characters")
+      if (phoneNumber.length != 10) {
+        alert("Phone number must be 10 characters long");
         failedCheck = true;
       }
-      const digits_only = (string: string) => [...string].every(c => '0123456789'.includes(c));
+      const digits_only = (string: string) =>
+        [...string].every((c) => "0123456789".includes(c));
       if (!digits_only(phoneNumber)) {
-        alert("Phone number should only contain numbers")
+        alert("Phone number should only contain numbers");
         failedCheck = true;
       }
 
@@ -136,10 +137,9 @@ const AccountPage = () => {
         // Update the local state with new data
         setUserData(editedUser);
         setIsEditing(false);
+
+        alert("Your account has been updated successfully!");
       }
-
-
-      alert("Your account has been updated successfully!");
     } catch (error) {
       console.error("Error updating account:", error);
       alert("Failed to update account. Please try again.");

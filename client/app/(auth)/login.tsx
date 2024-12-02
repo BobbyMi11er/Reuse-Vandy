@@ -14,9 +14,9 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../../firebase"
+import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { authStyles } from "./auth_style"; 
+import { authStyles } from "./auth_style";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const LoginPage = () => {
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -34,29 +34,27 @@ const LoginPage = () => {
 
   const handleSubmit = async () => {
     if (email.length === 0 || password.length === 0) {
-			alert('Please fill out all fields.');
-			return;
-		}
-		try {
-      console.log('Trying to sign in')
-      const {user} = await signInWithEmailAndPassword(auth, email, password)
+      alert("Please fill out all fields.");
+      return;
+    }
+    try {
+      console.log("Trying to sign in");
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await auth.currentUser?.getIdToken();
 
       if (!idToken) {
         throw new Error("Failed to retrieve ID token");
       }
 
-      router.replace("/(tabs)/home")
-    } catch(error) {
-      if (error instanceof Error) {
-        // setError(error.message)
-        Alert.alert(error.message)
-      }
-      else {
-        setError("An unknown error occured")
+      router.replace("/(tabs)/home");
+    } catch (error: any) {
+      if (error.code === "auth/invalid-credential") {
+        alert("Incorrect login information");
+      } else {
+        alert("An unknown error occured");
       }
     }
-  }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -65,18 +63,24 @@ const LoginPage = () => {
         <ScrollView contentContainerStyle={authStyles.scrollContent}>
           <View style={authStyles.content}>
             <View style={authStyles.topSection}>
-              <Text style={authStyles.title} testID="login-text">Login</Text>
-              <Text style={authStyles.subtitle}>Welcome back to Reuse Vandy!</Text>
+              <Text style={authStyles.title} testID="login-text">
+                Login
+              </Text>
+              <Text style={authStyles.subtitle}>
+                Welcome back to Reuse Vandy!
+              </Text>
 
               <View style={authStyles.inputContainer}>
                 <Text style={authStyles.label}>EMAIL</Text>
                 <TextInput
                   style={authStyles.input}
-                  placeholder={isFocusedEmail ? "" : "hello@reallygreatsite.com"}
+                  placeholder={
+                    isFocusedEmail ? "" : "hello@reallygreatsite.com"
+                  }
                   placeholderTextColor="#999"
                   onFocus={() => setIsFocusedEmail(true)}
                   onBlur={() => setIsFocusedEmail(false)}
-                  onChangeText={newText => setEmail(newText)}
+                  onChangeText={(newText) => setEmail(newText)}
                 />
               </View>
 
@@ -86,12 +90,12 @@ const LoginPage = () => {
                   style={authStyles.input}
                   placeholder={isFocusedPassword ? "" : "********"}
                   placeholderTextColor="#999"
-                  onChangeText={newText => setPassword(newText)}
+                  onChangeText={(newText) => setPassword(newText)}
                   onFocus={() => setIsFocusedPassword(true)}
                   onBlur={() => setIsFocusedPassword(false)}
                   secureTextEntry={true}
                 />
-            </View>
+              </View>
             </View>
             <View style={authStyles.bottomSection}>
               <TouchableOpacity
@@ -99,10 +103,11 @@ const LoginPage = () => {
                 activeOpacity={0.7}
                 onPress={() => handleSubmit()}
               >
-                <Text style={authStyles.buttonText} testID="login-button">Login</Text>
+                <Text style={authStyles.buttonText} testID="login-button">
+                  Login
+                </Text>
               </TouchableOpacity>
               <Text style={authStyles.errorText}>{error}</Text>
-              
             </View>
           </View>
         </ScrollView>
