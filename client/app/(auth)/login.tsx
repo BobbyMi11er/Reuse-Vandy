@@ -11,6 +11,7 @@ import {
   ScrollView,
   Button,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { auth } from "../../firebase"
@@ -48,7 +49,8 @@ const LoginPage = () => {
       router.replace("/(tabs)/home")
     } catch(error) {
       if (error instanceof Error) {
-        setError(error.message)
+        // setError(error.message)
+        Alert.alert(error.message)
       }
       else {
         setError("An unknown error occured")

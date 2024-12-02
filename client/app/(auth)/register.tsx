@@ -47,6 +47,14 @@ const RegistrationPage = () => {
       return;
     }
 
+    if (phoneNumber.length > 10) {
+      alert("Phone number cannot be more than 10 characters")
+    }
+    const digits_only = (string: string) => [...string].every(c => '0123456789'.includes(c));
+    if (!digits_only(phoneNumber)) {
+      alert("Phone number should only contain numbers")
+    }
+
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -67,6 +75,8 @@ const RegistrationPage = () => {
         pronouns: "",
         profile_img_url: "",
       };
+
+
 
       createUser(idToken!, userData);
 
