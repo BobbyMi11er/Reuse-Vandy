@@ -49,11 +49,13 @@ const AccountPage = () => {
       // image_url not in image storage
       let image_url = userData.profile_img_url;
       if (
-        image_url &&
-        (image_url.length < 19 ||
-          image_url.substring(0, 19) != "https://reuse-vandy")
+        !image_url ||
+        (image_url &&
+          (image_url.length < 19 ||
+            image_url.substring(0, 19) != "https://reuse-vandy"))
       ) {
-        image_url = "";
+        image_url =
+          "https://reuse-vandy.s3.us-east-2.amazonaws.com/profile-placeholder.png";
       }
       setImageUrl(image_url);
     }
