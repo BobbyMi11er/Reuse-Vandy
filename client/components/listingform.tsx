@@ -30,9 +30,12 @@ const ListingForm = () => {
   const [price, setPrice] = useState("");
   const [size, setSize] = useState("");
 
+  const [resetTrigger, setResetTrigger] = useState(false)
+
   const imageUploadRef = useRef<{
     pickImage: () => void;
     uploadImage: () => Promise<string | null>;
+    resetImage: () => void;
   } | null>(null);
 
   const dismissKeyboard = () => {
@@ -61,7 +64,7 @@ const ListingForm = () => {
     // console.log(uploadedImageUrl)
     if (imageUploadRef.current) {
       uploadedImageUrl = await imageUploadRef.current.uploadImage();
-      console.log(uploadedImageUrl);
+      // console.log(uploadedImageUrl);
       if (!uploadedImageUrl) {
         alert("Image upload failed. Please try again.");
         return;
@@ -91,7 +94,18 @@ const ListingForm = () => {
       };
 
       await createPost(idToken, newPost);
+      setTitle("");
+      setDescription("");
+      setColor("");
+      setImageUrl(null);
+      setPrice("");
+      setSize("");
+
+      setResetTrigger((prev) => !prev);
+
       alert("Listing created successfully!");
+
+
     } catch (error) {
       console.error("Error creating post (ListingForm):", error);
       alert("Failed to create listing. Please try again.");
@@ -139,6 +153,8 @@ const ListingForm = () => {
                 <ImageUploadComponent
                   ref={imageUploadRef}
                   onImageUpload={handleImageUpload}
+                  onImageChoice={() => {}}
+                  resetTrigger={resetTrigger}
                 />
               </View>
 
