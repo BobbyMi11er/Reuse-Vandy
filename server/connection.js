@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise')
 
 const pool = mysql.createPool({
     host: process.env.HOST_URL,
-    user: process.env.USER_NAME,
+    user: process.env.USER,
     password: process.env.PASSWORD,
     // timeout: 15,
     multipleStatements: true,
