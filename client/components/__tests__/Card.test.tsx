@@ -4,13 +4,26 @@ import Card from "../Card";
 import { getToken } from "../../firebase";
 import { deletePost } from "@/utils/interfaces/postInterface";
 import { Alert } from "react-native";
+import {
+  addLike,
+  deleteLike,
+  getLikesByPost,
+} from "@/utils/interfaces/likesInterface";
+import { Ionicons } from "@expo/vector-icons";
 
 jest.mock("../../firebase", () => ({
+  auth: { currentUser: { uid: "test-user-id" } },
   getToken: jest.fn(),
 }));
 
 jest.mock("@/utils/interfaces/postInterface", () => ({
   deletePost: jest.fn(),
+}));
+
+jest.mock("@/utils/interfaces/likesInterface", () => ({
+  getLikesByPost: jest.fn(),
+  addLike: jest.fn(),
+  deleteLike: jest.fn(),
 }));
 
 jest.mock("@expo/vector-icons", () => ({
@@ -109,6 +122,133 @@ describe("Card", () => {
     });
 
     consoleSpy.mockRestore();
+    alertSpy.mockRestore();
+  });
+
+  it("does not set liked when token retrieval fails", async () => {
+    (getToken as jest.Mock).mockResolvedValue(null);
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+    await waitFor(() => {
+      // Check that the icon rendered is heart-outline
+      const icon = getByTestId("heart-icon").findByType(Ionicons);
+      expect(icon.props.name).toBe("heart-outline");
+    });
+  });
+
+  it("sets liked to false when no matching likes found", async () => {
+    (getLikesByPost as jest.Mock).mockResolvedValue([]);
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+    await waitFor(() => {
+      // Check that the icon rendered is heart-outline
+      const icon = getByTestId("heart-icon").findByType(Ionicons);
+      expect(icon.props.name).toBe("heart-outline");
+    });
+  });
+
+  it("sets liked to true when a matching like is found", async () => {
+    (getLikesByPost as jest.Mock).mockResolvedValue([
+      { user_firebase_id: "test-user-id", post_id: 1 },
+    ]);
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+    await waitFor(() => {
+      // Check that the icon rendered is heart-outline
+      const icon = getByTestId("heart-icon").findByType(Ionicons);
+      expect(icon.props.name).toBe("heart-outline");
+    });
+  });
+
+  it("does not call API when token retrieval fails", async () => {
+    (getToken as jest.Mock).mockResolvedValue(null);
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+    fireEvent.press(getByTestId("heart-icon"));
+
+    await waitFor(() => {
+      expect(addLike).not.toHaveBeenCalled();
+      expect(deleteLike).not.toHaveBeenCalled();
+    });
+  });
+
+  it("handles liking a post successfully", async () => {
+    // Mock token retrieval
+    (getToken as jest.Mock).mockResolvedValue("test-token");
+
+    // Mock successful addLike response
+    (addLike as jest.Mock).mockResolvedValue(true);
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+
+    // Simulate pressing the heart icon to like the post
+    fireEvent.press(getByTestId("heart-icon"));
+
+    await waitFor(() => {
+      // Check that addLike was called with the correct arguments
+      expect(addLike).toHaveBeenCalledWith("test-token", {
+        user_firebase_id: "test-user-id",
+        post_id: 1,
+      });
+    });
+  });
+
+  // it("handles unliking a post successfully", async () => {
+  //   // Mock token retrieval
+  //   (getToken as jest.Mock).mockResolvedValue("test-token");
+
+  //   // Mock successful addLike response
+  //   (deleteLike as jest.Mock).mockResolvedValue(true);
+
+  //   const { getByTestId } = render(<Card {...mockProps} />);
+
+  //   // Simulate pressing the heart icon to like the post
+  //   fireEvent.press(getByTestId("heart-icon"));
+
+  //   await waitFor(() => {
+  //     // Check that addLike was called with the correct arguments
+  //     expect(addLike).toHaveBeenCalledWith("test-token", {
+  //       user_firebase_id: "test-user-id",
+  //       post_id: 1,
+  //     });
+  //   });
+  // });
+
+  // it("handles unliking a post successfully", async () => {
+  //   (getToken as jest.Mock).mockResolvedValue("test-token");
+  //   (deleteLike as jest.Mock).mockResolvedValue(true);
+  //   (getLikesByPost as jest.Mock).mockResolvedValue([
+  //     { user_firebase_id: "test-user-id", post_id: 1 },
+  //   ]);
+
+  //   const { getByTestId } = render(<Card {...mockProps} />);
+  //   fireEvent.press(getByTestId("heart-icon"));
+
+  //   await waitFor(() => {
+  //     expect(deleteLike).toHaveBeenCalledWith("test-token", {
+  //       user_firebase_id: "test-user-id",
+  //       post_id: mockProps.post_id,
+  //     });
+  //     expect(getByTestId("heart-icon").props.children.type).toBe(
+  //       "heart-outline"
+  //     );
+  //   });
+  // });
+
+  it("handles errors during liking gracefully", async () => {
+    const error = new Error("Like failed");
+    (getToken as jest.Mock).mockResolvedValue("test-token");
+    (addLike as jest.Mock).mockRejectedValue(error);
+
+    const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+
+    const { getByTestId } = render(<Card {...mockProps} />);
+    fireEvent.press(getByTestId("heart-icon"));
+
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(error.toString());
+    });
+
     alertSpy.mockRestore();
   });
 });

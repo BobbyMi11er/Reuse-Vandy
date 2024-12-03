@@ -10,6 +10,7 @@ import {
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
@@ -43,18 +44,18 @@ const RegistrationPage = () => {
   const handleSubmit = async () => {
     console.log("Submitting");
     if (email.length === 0 || password.length === 0) {
-      alert("Please fill out all fields.");
+      Alert.alert("Please fill out all fields.");
       return;
     }
 
     if (phoneNumber.length != 10) {
-      alert("Phone number must be 10 characters long");
+      Alert.alert("Phone number must be 10 characters long");
       return;
     }
     const digits_only = (string: string) =>
       [...string].every((c) => "0123456789".includes(c));
     if (!digits_only(phoneNumber)) {
-      alert("Phone number should only contain numbers");
+      Alert.alert("Phone number should only contain numbers");
       return;
     }
 
@@ -84,13 +85,13 @@ const RegistrationPage = () => {
       router.navigate("/login");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
-        alert("Email is already in use.");
+        Alert.alert("Email is already in use.");
         return;
       } else if (error.code === "auth/weak-password") {
-        alert("Password is too weak.");
+        Alert.alert("Password is too weak.");
         return;
       } else if (error.code === "auth/invalid-email") {
-        alert("Invalid email address.");
+        Alert.alert("Invalid email address.");
         return;
       }
     }
