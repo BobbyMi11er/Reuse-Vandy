@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "ReuseVandy",
+    "slug": "ReuseVandy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
