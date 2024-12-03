@@ -11,6 +11,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Button,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { auth } from "../firebase";
@@ -46,7 +47,7 @@ const ListingForm = () => {
 
   const handleImageUpload = (url: string | null) => {
     if (!url) {
-      alert("Image upload failed. Please try again.");
+      Alert.alert("Image upload failed. Please try again.");
       return;
     }
     setImageUrl(url); // Set the uploaded image URL
@@ -55,18 +56,18 @@ const ListingForm = () => {
   const handleSubmit = async () => {
     // Validate required fields
     if (!title || !price) {
-      alert("Please fill out all required fields (title and price)");
+      Alert.alert("Please fill out all required fields (title and price)");
       return;
     }
 
     if (title.length > 100) {
-      alert("Title must be less than 100 characters");
+      Alert.alert("Title must be less than 100 characters");
       return;
     } else if (description.length > 500) {
-      alert("Description must be less than 500 characters");
+      Alert.alert("Description must be less than 500 characters");
       return;
     } else if (parseInt(price) >= 10000) {
-      alert("Price must be less than $10,000");
+      Alert.alert("Price must be less than $10,000");
       return;
     }
 
@@ -77,7 +78,7 @@ const ListingForm = () => {
       uploadedImageUrl = await imageUploadRef.current.uploadImage();
       // console.log(uploadedImageUrl);
       if (!uploadedImageUrl) {
-        alert("Image upload failed. Please try again.");
+        Alert.alert("Image upload failed. Please try again.");
         return;
       }
       setImageUrl(uploadedImageUrl); // Update the state with the new URL
@@ -86,7 +87,7 @@ const ListingForm = () => {
     try {
       const idToken = await auth.currentUser?.getIdToken();
       if (!idToken || !auth.currentUser?.uid) {
-        alert("You must be logged in to create a post.");
+        Alert.alert("You must be logged in to create a post.");
         return;
       }
 
@@ -114,10 +115,10 @@ const ListingForm = () => {
 
       setResetTrigger((prev) => !prev);
 
-      alert("Listing created successfully!");
+      Alert.alert("Listing created successfully!");
     } catch (error) {
       console.error("Error creating post (ListingForm):", error);
-      alert("Failed to create listing. Please try again.");
+      Alert.alert("Failed to create listing. Please try again.");
     }
   };
 

@@ -28,8 +28,8 @@ const DeletePopup: React.FC<PopupProps> = ({
   setModalVisible,
   postId,
 }) => {
-  const [editModalVisible, setEditModalVisible] = useState(false)
-  
+  const [editModalVisible, setEditModalVisible] = useState(false);
+
   const handleDelete = async () => {
     try {
       const token = await getToken();
@@ -41,9 +41,9 @@ const DeletePopup: React.FC<PopupProps> = ({
     }
   };
 
-    const handleEditPosts = () => {
-      setEditModalVisible(true)
-    }
+  const handleEditPosts = () => {
+    setEditModalVisible(true);
+  };
   return (
     <Modal
       testID="delete-popup-modal"
@@ -56,11 +56,18 @@ const DeletePopup: React.FC<PopupProps> = ({
       }}
     >
       <View style={styles.overlay}>
-        <EditPostsModal modalVisible={editModalVisible} setModalVisible={setEditModalVisible} postId={postId}/>
+        <EditPostsModal
+          modalVisible={editModalVisible}
+          setModalVisible={setEditModalVisible}
+          postId={postId}
+        />
         <View style={styles.modalView}>
           <View>
             <Text style={styles.title}>Do you want to change this post?</Text>
-            <Pressable style={[styles.button, styles.edit_button]}>
+            <Pressable
+              style={[styles.button, styles.edit_button]}
+              onPress={handleEditPosts}
+            >
               <Text>Edit Post</Text>
             </Pressable>
             <Pressable
