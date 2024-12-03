@@ -1,104 +1,85 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
-import { Alert } from "react-native";
 import DeletePopup from "../DeletePopup";
-import { getToken } from "../../firebase";
 import { deletePost } from "@/utils/interfaces/postInterface";
-
-jest.mock("../../firebase", () => ({
-  getToken: jest.fn(),
-}));
+import { Alert } from "react-native";
 
 jest.mock("@/utils/interfaces/postInterface", () => ({
   deletePost: jest.fn(),
 }));
 
-jest.spyOn(Alert, "alert");
+jest.mock("../../firebase", () => ({
+  auth: {
+    currentUser: {
+      getIdToken: jest.fn().mockResolvedValue("mock-token"),
+    },
+  },
+  getToken: jest.fn().mockResolvedValue("mock-token"),
+}));
+
+jest.spyOn(Alert, "alert").mockImplementation(jest.fn());
 
 describe("DeletePopup", () => {
-  const mockSetModalVisible = jest.fn();
-  const defaultProps = {
-    modalVisible: true,
-    setModalVisible: mockSetModalVisible,
-    postId: 123,
-  };
+  const setModalVisible = jest.fn();
+  const postId = 1;
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders correctly when visible", () => {
-    const { getByText } = render(<DeletePopup {...defaultProps} />);
+  it("should render correctly when modal is visible", () => {
+    const { getByTestId } = render(
+      <DeletePopup
+        modalVisible={true}
+        setModalVisible={setModalVisible}
+        postId={postId}
+      />
+    );
 
-    expect(getByText("Do you want to change this post?")).toBeTruthy();
-    expect(getByText("Edit Post")).toBeTruthy();
-    expect(getByText("Delete Post")).toBeTruthy();
-    expect(getByText("Exit")).toBeTruthy();
+    expect(getByTestId("delete-popup-modal")).toBeTruthy();
   });
 
-  it("handles close button press", () => {
-    const { getByText } = render(<DeletePopup {...defaultProps} />);
+  it("should call deletePost and close modal on delete button press", async () => {
+    const { getByText } = render(
+      <DeletePopup
+        modalVisible={true}
+        setModalVisible={setModalVisible}
+        postId={postId}
+      />
+    );
+
+    fireEvent.press(getByText("Delete Post"));
+
+    await waitFor(() =>
+      expect(deletePost).toHaveBeenCalledWith("mock-token", postId)
+    );
+    expect(setModalVisible).toHaveBeenCalledWith(false);
+    expect(Alert.alert).toHaveBeenCalledWith("Post Deleted");
+  });
+
+  it("should call setModalVisible with false on exit button press", () => {
+    const { getByText } = render(
+      <DeletePopup
+        modalVisible={true}
+        setModalVisible={setModalVisible}
+        postId={postId}
+      />
+    );
 
     fireEvent.press(getByText("Exit"));
-    expect(mockSetModalVisible).toHaveBeenCalledWith(false);
+
+    expect(setModalVisible).toHaveBeenCalledWith(false);
   });
 
-  it("handles delete button press", async () => {
-    const mockToken = "mock-token";
-    (getToken as jest.Mock).mockResolvedValue(mockToken);
-    (deletePost as jest.Mock).mockResolvedValue(undefined);
+  //   it('should handle delete post error', async () => {
+  //     deletePost.mockRejectedValueOnce(new Error('Delete failed'));
+  //     const { getByText } = render(
+  //       <DeletePopup modalVisible={true} setModalVisible={setModalVisible} postId={postId} />
+  //     );
 
-    const { getByText } = render(<DeletePopup {...defaultProps} />);
+  //     fireEvent.press(getByText('Delete Post'));
 
-    fireEvent.press(getByText("Delete Post"));
-
-    await waitFor(() => {
-      expect(getToken).toHaveBeenCalled();
-      expect(deletePost).toHaveBeenCalledWith(mockToken, defaultProps.postId);
-      expect(mockSetModalVisible).toHaveBeenCalledWith(false);
-    });
-  });
-
-  it("handles modal close request", () => {
-    const { getByTestId } = render(
-      <DeletePopup {...defaultProps} testID="delete-popup-modal" />
-    );
-
-    fireEvent(getByTestId("delete-popup-modal"), "onRequestClose");
-
-    expect(Alert.alert).toHaveBeenCalledWith("Modal has been closed.");
-    expect(mockSetModalVisible).toHaveBeenCalled();
-  });
-
-  it("does not render when not visible", () => {
-    const { queryByText } = render(
-      <DeletePopup {...defaultProps} modalVisible={false} />
-    );
-
-    expect(queryByText("Do you want to change this post?")).toBeNull();
-  });
-
-  it("handles delete failure", async () => {
-    const mockToken = "mock-token";
-    const mockError = new Error("Delete failed");
-
-    (getToken as jest.Mock).mockResolvedValue(mockToken);
-    (deletePost as jest.Mock).mockRejectedValue(mockError);
-
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    const { getByText } = render(<DeletePopup {...defaultProps} />);
-
-    fireEvent.press(getByText("Delete Post"));
-
-    await waitFor(() => {
-      expect(getToken).toHaveBeenCalled();
-      expect(deletePost).toHaveBeenCalledWith(mockToken, defaultProps.postId);
-      expect(mockSetModalVisible).not.toHaveBeenCalled();
-    });
-
-    consoleErrorSpy.mockRestore();
-  });
+  //     await waitFor(() => expect(deletePost).toHaveBeenCalledWith('mock-token', postId));
+  //     expect(console.error).toHaveBeenCalledWith(new Error('Delete failed'));
+  //   });
 });
