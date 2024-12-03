@@ -10,7 +10,7 @@ We will be using ReactNative for the frontend with a NodeJS backend connected to
 The app will be hosted on Expo, a framework library for ReactNative.
 
 ## Installation Instructions
-- Because our application is currently under review, beta testers must follow [this link]([url](https://testflight.apple.com/join/HuEqWhHA)) in order to download our application from the app store.
+- Because our application is currently under review, beta testers must follow [this link](https://testflight.apple.com/join/HuEqWhHA) in order to download our application from the app store.
 
 ## Deployment Instructions
 In order to run a test version of our application in the CLI, follow these steps (requires Xcode):
